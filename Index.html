@@ -1,0 +1,1382 @@
+<meta charset="utf-8">
+<title>Brain Dump</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+  --paper: #B9A6FF;
+  --paper-raised: #FFFFFF;
+  --surface-recessed: #F5F0FE;
+  --ink: #241C3D;
+  --ink-soft: #6C5FA0;
+  --line: #ECE4FF;
+  --on-paper: #241C3D;
+  --on-paper-soft: #4A3B7A;
+  --channel: #E81E78;
+  --channel-tint: #FFE1EF;
+  --spark: #DA8A00;
+  --spark-tint: #FFF0CC;
+  --moss: #16A34A;
+  --moss-tint: #DCFCE3;
+  --danger: #E23744;
+  --danger-tint: #FEE2E4;
+  --shadow: 0 1px 2px rgba(36,28,61,0.07), 0 8px 24px -10px rgba(36,28,61,0.25);
+
+  --ch0: #FF5A5F; --ch0-tint: #FFE3E4;
+  --ch1: #00A99A; --ch1-tint: #D6F5F2;
+  --ch2: #6FA717; --ch2-tint: #EAF5D0;
+  --ch3: #E8368F; --ch3-tint: #FDE1F0;
+  --ch4: #2F8FE0; --ch4-tint: #DCEEFC;
+  --ch5: #F0791A; --ch5-tint: #FFE7D6;
+
+  --brain-fill: #FFAFC7;
+  --brain-line: #E8608F;
+  --brain-fold: #FFD3E1;
+  --brain-blush: #FF87A8;
+  --brain-sparkle: #FFC324;
+  --brain-sweat-fill: #8FD2EE;
+  --brain-sweat-line: #2F8FE0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #19142E;
+    --paper-raised: #241C44;
+    --surface-recessed: #19142E;
+    --ink: #F2ECFF;
+    --ink-soft: #B7A9DE;
+    --line: #3A2F5C;
+    --on-paper: #F2ECFF;
+    --on-paper-soft: #B7A9DE;
+    --channel: #FF6FB0;
+    --channel-tint: #3A2436;
+    --spark: #FFCB66;
+    --spark-tint: #3A2C10;
+    --moss: #4ADE80;
+    --moss-tint: #17351F;
+    --danger: #FF8087;
+    --danger-tint: #3A1A1E;
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 28px -10px rgba(0,0,0,0.6);
+
+    --ch0: #FF8A8E; --ch0-tint: #3A1F20;
+    --ch1: #4DD9CB; --ch1-tint: #123330;
+    --ch2: #A8DB4F; --ch2-tint: #26330F;
+    --ch3: #FF6FB8; --ch3-tint: #3A1729;
+    --ch4: #6DBBFF; --ch4-tint: #16283A;
+    --ch5: #FFA166; --ch5-tint: #3A2413;
+
+    --brain-fill: #FF9DBE;
+    --brain-line: #FF6FA0;
+    --brain-fold: #FFC1D6;
+    --brain-blush: #FF6FA0;
+    --brain-sparkle: #FFD34D;
+    --brain-sweat-fill: #7EC8E3;
+    --brain-sweat-line: #6DBBFF;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #19142E;
+  --paper-raised: #241C44;
+  --surface-recessed: #19142E;
+  --ink: #F2ECFF;
+  --ink-soft: #B7A9DE;
+  --line: #3A2F5C;
+  --on-paper: #F2ECFF;
+  --on-paper-soft: #B7A9DE;
+  --channel: #FF6FB0;
+  --channel-tint: #3A2436;
+  --spark: #FFCB66;
+  --spark-tint: #3A2C10;
+  --moss: #4ADE80;
+  --moss-tint: #17351F;
+  --danger: #FF8087;
+  --danger-tint: #3A1A1E;
+  --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 28px -10px rgba(0,0,0,0.6);
+
+  --ch0: #FF8A8E; --ch0-tint: #3A1F20;
+  --ch1: #4DD9CB; --ch1-tint: #123330;
+  --ch2: #A8DB4F; --ch2-tint: #26330F;
+  --ch3: #FF6FB8; --ch3-tint: #3A1729;
+  --ch4: #6DBBFF; --ch4-tint: #16283A;
+  --ch5: #FFA166; --ch5-tint: #3A2413;
+
+  --brain-fill: #FF9DBE;
+  --brain-line: #FF6FA0;
+  --brain-fold: #FFC1D6;
+  --brain-blush: #FF6FA0;
+  --brain-sparkle: #FFD34D;
+  --brain-sweat-fill: #7EC8E3;
+  --brain-sweat-line: #6DBBFF;
+}
+
+/* ---------- accent themes (vivid canvas + white cards + contrasting pink buttons; category hues & mascot stay constant) ---------- */
+[data-accent="coral"] {
+  --paper: #FF8F73; --paper-raised: #FFFFFF; --surface-recessed: #FFF3F0; --ink: #3B2420; --ink-soft: #8C6B63; --line: #FFE1D9;
+  --on-paper: #3B2420; --on-paper-soft: #6B3B30;
+  --channel: #FF2D8A; --channel-tint: #FFE1F0;
+}
+[data-accent="navy"] {
+  --paper: #2C4E8C; --paper-raised: #FFFFFF; --surface-recessed: #F1F4F9; --ink: #1B2436; --ink-soft: #5C6B85; --line: #DCE3EE;
+  --on-paper: #FFFFFF; --on-paper-soft: #C7D6EC;
+  --channel: #E81E78; --channel-tint: #FFE1F0;
+}
+[data-accent="sky"] {
+  --paper: #29B6FF; --paper-raised: #FFFFFF; --surface-recessed: #EFF8FF; --ink: #132A3A; --ink-soft: #5E7F94; --line: #D6ECFA;
+  --on-paper: #0E2431; --on-paper-soft: #2C5068;
+  --channel: #FF2D8A; --channel-tint: #FFE1F0;
+}
+[data-accent="beige"] {
+  --paper: #E3B873; --paper-raised: #FFFFFF; --surface-recessed: #FAF4EA; --ink: #332A1E; --ink-soft: #8A7A63; --line: #F0E2C4;
+  --on-paper: #332A1E; --on-paper-soft: #6B5A3E;
+  --channel: #E8368F; --channel-tint: #FFE1F0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent="coral"] {
+    --paper: #241512; --paper-raised: #301E1A; --surface-recessed: #241512; --ink: #FFE9E4; --ink-soft: #D9AEA4; --line: #4A2E27;
+    --on-paper: #FFE9E4; --on-paper-soft: #D9AEA4;
+    --channel: #FF6FB0; --channel-tint: #3A2436;
+  }
+  :root:not([data-theme="light"])[data-accent="navy"] {
+    --paper: #0F1A2B; --paper-raised: #16233A; --surface-recessed: #0F1A2B; --ink: #E8EEF7; --ink-soft: #9FB0C9; --line: #233350;
+    --on-paper: #E8EEF7; --on-paper-soft: #9FB0C9;
+    --channel: #FF6FB0; --channel-tint: #3A2436;
+  }
+  :root:not([data-theme="light"])[data-accent="sky"] {
+    --paper: #0E1F2C; --paper-raised: #152C3D; --surface-recessed: #0E1F2C; --ink: #E4F3FC; --ink-soft: #94BBD1; --line: #20394C;
+    --on-paper: #E4F3FC; --on-paper-soft: #94BBD1;
+    --channel: #FF6FB0; --channel-tint: #3A2436;
+  }
+  :root:not([data-theme="light"])[data-accent="beige"] {
+    --paper: #221C13; --paper-raised: #2C2419; --surface-recessed: #221C13; --ink: #F2E9D9; --ink-soft: #C2AF92; --line: #3D3220;
+    --on-paper: #F2E9D9; --on-paper-soft: #C2AF92;
+    --channel: #FF6FB0; --channel-tint: #3A2436;
+  }
+}
+:root[data-theme="dark"][data-accent="coral"] {
+  --paper: #241512; --paper-raised: #301E1A; --surface-recessed: #241512; --ink: #FFE9E4; --ink-soft: #D9AEA4; --line: #4A2E27;
+  --on-paper: #FFE9E4; --on-paper-soft: #D9AEA4;
+  --channel: #FF6FB0; --channel-tint: #3A2436;
+}
+:root[data-theme="dark"][data-accent="navy"] {
+  --paper: #0F1A2B; --paper-raised: #16233A; --surface-recessed: #0F1A2B; --ink: #E8EEF7; --ink-soft: #9FB0C9; --line: #233350;
+  --on-paper: #E8EEF7; --on-paper-soft: #9FB0C9;
+  --channel: #FF6FB0; --channel-tint: #3A2436;
+}
+:root[data-theme="dark"][data-accent="sky"] {
+  --paper: #0E1F2C; --paper-raised: #152C3D; --surface-recessed: #0E1F2C; --ink: #E4F3FC; --ink-soft: #94BBD1; --line: #20394C;
+  --on-paper: #E4F3FC; --on-paper-soft: #94BBD1;
+  --channel: #FF6FB0; --channel-tint: #3A2436;
+}
+:root[data-theme="dark"][data-accent="beige"] {
+  --paper: #221C13; --paper-raised: #2C2419; --surface-recessed: #221C13; --ink: #F2E9D9; --ink-soft: #C2AF92; --line: #3D3220;
+  --on-paper: #F2E9D9; --on-paper-soft: #C2AF92;
+  --channel: #FF6FB0; --channel-tint: #3A2436;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Libre Franklin', ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: 'Fraunces', ui-serif, Georgia, serif; text-wrap: balance; margin: 0; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 28px 22px 80px; }
+
+/* ---------- header ---------- */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 6px;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; color: var(--on-paper); }
+.brand .tag { font-size: 13px; color: var(--on-paper-soft); font-style: italic; font-family: 'Fraunces', serif; }
+.point-pill {
+  position: relative;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 16px 7px 10px; box-shadow: var(--shadow);
+}
+.point-pill svg { width: 20px; height: 20px; flex: none; }
+.point-pill .num {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 17px;
+  font-variant-numeric: tabular-nums; color: var(--spark);
+}
+.point-pill .lbl { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
+.float-layer { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.float-pop {
+  position: absolute; right: 10px; top: 0;
+  font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px;
+  animation: floatUp 1100ms ease-out forwards;
+}
+.float-pop.gain { color: var(--moss); }
+.float-pop.loss { color: var(--danger); }
+@keyframes floatUp {
+  0% { opacity: 0; transform: translateY(4px); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .float-pop { animation: none; opacity: 0; }
+}
+
+.wave { width: 100%; height: 18px; margin: 14px 0 20px; display: block; }
+
+/* ---------- toolbar: tabs + theme + export ---------- */
+.toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; margin-bottom: 20px;
+}
+.tabs { display: flex; gap: 6px; background: var(--paper-raised); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+.tab-btn {
+  border: none; background: none; color: var(--ink-soft); font-weight: 600; font-size: 13.5px;
+  padding: 7px 16px; border-radius: 999px;
+}
+.tab-btn[aria-selected="true"] { background: var(--channel); color: #fff; }
+.tab-btn:not([aria-selected="true"]):hover { color: var(--ink); }
+.toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.toolbar-right .btn-ghost { background: var(--paper-raised); }
+.theme-picker { display: flex; align-items: center; gap: 6px; }
+.theme-picker .swatch {
+  width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; padding: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+}
+.theme-picker .swatch[aria-pressed="true"] { border-color: var(--on-paper); }
+.theme-picker .swatch:focus-visible { outline: 2px solid var(--on-paper); outline-offset: 2px; }
+
+.scheme-picker {
+  display: flex; gap: 2px; background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: 999px; padding: 3px;
+}
+.scheme-btn { border: none; background: none; color: var(--ink-soft); font-weight: 600; font-size: 11.5px; padding: 6px 11px; border-radius: 999px; }
+.scheme-btn[aria-pressed="true"] { background: var(--channel); color: #fff; }
+.scheme-btn:not([aria-pressed="true"]):hover { color: var(--ink); }
+
+/* ---------- demo banner ---------- */
+.banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--channel-tint); border: 1px solid var(--line);
+  border-radius: 12px; padding: 10px 16px; margin-bottom: 20px;
+  font-size: 13.5px; color: var(--ink-soft);
+}
+.banner button { flex: none; }
+
+/* ---------- dump hero ---------- */
+.dump-card {
+  background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: 18px; padding: 22px 22px 18px; box-shadow: var(--shadow);
+  margin-bottom: 30px;
+}
+.dump-head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.dump-head h2 { font-size: 21px; font-weight: 600; margin-bottom: 4px; }
+.dump-head .sub { font-size: 13.5px; color: var(--ink-soft); }
+
+.mascot-wrap { flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+#brainMascot { width: 104px; height: 92px; overflow: visible; }
+.mascot-caption {
+  font-size: 11px; font-weight: 600; color: var(--on-paper-soft); white-space: nowrap;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px;
+}
+.brain-clutter path, .brain-sparkle path, .brain-sweat path {
+  animation: brainBob 2600ms ease-in-out infinite;
+}
+@keyframes brainBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) {
+  .brain-clutter path, .brain-sparkle path, .brain-sweat path { animation: none; }
+}
+.dump-card textarea {
+  width: 100%; min-height: 128px; resize: vertical;
+  background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px; font: inherit; color: var(--ink);
+  font-size: 15.5px; line-height: 1.55;
+}
+.dump-card textarea:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
+.dump-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.dump-hint { font-size: 12.5px; color: var(--ink-soft); }
+.dump-hint kbd { font-family: 'IBM Plex Mono', monospace; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+.dump-status { font-size: 13px; min-height: 18px; }
+.dump-status.error { color: var(--danger); }
+.dump-status.info { color: var(--ink-soft); }
+.dump-actions { display: flex; gap: 8px; }
+
+/* ---------- buttons ---------- */
+button { font: inherit; cursor: pointer; }
+.btn {
+  border: none; border-radius: 999px; padding: 10px 20px; font-weight: 600; font-size: 14px;
+  transition: transform 90ms ease, box-shadow 90ms ease, background 120ms ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--channel); color: #fff; box-shadow: 0 2px 0 rgba(0,0,0,0.08); }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+.btn-ghost:hover { color: var(--ink); border-color: var(--ink-soft); }
+.btn-quiet { background: none; border: none; color: var(--ink-soft); padding: 4px 8px; font-size: 13px; }
+.btn-quiet:hover { color: var(--ink); }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+
+/* ---------- layout ---------- */
+.layout { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
+@media (min-width: 900px) {
+  .layout { grid-template-columns: minmax(0,1fr) 320px; }
+}
+.section-label {
+  font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--on-paper-soft); margin-bottom: 12px;
+}
+
+/* ---------- channels ---------- */
+.channels { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
+.channel {
+  background: var(--paper-raised); border: 1px solid var(--line); border-top: 5px solid var(--hue, var(--channel));
+  border-radius: 16px;
+  padding: 14px 16px 14px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px;
+}
+.channel-head { display: flex; align-items: center; gap: 8px; }
+.channel-name {
+  font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; color: var(--ink);
+  background: none; border: none; border-radius: 6px; padding: 2px 4px; flex: 1; min-width: 0;
+}
+.channel-name:hover, .channel-name:focus { background: var(--hue-tint, var(--channel-tint)); outline: none; }
+.channel-count {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; font-weight: 600; color: var(--hue, var(--channel));
+  background: var(--hue-tint, var(--channel-tint)); border-radius: 999px; padding: 2px 8px; flex: none;
+}
+.task-list { display: flex; flex-direction: column; gap: 6px; }
+.task {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 7px 8px; border-radius: 10px; transition: background 120ms ease;
+}
+.task:hover { background: var(--surface-recessed); }
+.task-check {
+  flex: none; width: 20px; height: 20px; border-radius: 6px; margin-top: 1px;
+  border: 1.6px solid var(--line); background: var(--paper-raised);
+  display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.task-check svg { width: 13px; height: 13px; opacity: 0; transition: opacity 100ms ease; color: #fff; }
+.task.done .task-check { background: var(--moss); border-color: var(--moss); }
+.task.done .task-check svg { opacity: 1; }
+.task-text { flex: 1; min-width: 0; font-size: 14.5px; word-break: break-word; }
+.task.done .task-text { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--line); }
+.task-points {
+  flex: none; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--spark); background: var(--spark-tint); border-radius: 999px; padding: 2px 7px;
+  margin-top: 1px;
+}
+.task-del {
+  flex: none; opacity: 0; border: none; background: none; color: var(--ink-soft);
+  width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+}
+.task:hover .task-del { opacity: 1; }
+.task-del:hover { color: var(--danger); background: var(--danger-tint); }
+.task-del svg { width: 13px; height: 13px; }
+.task-move {
+  flex: none; opacity: 0; border: none; background: none; color: var(--ink-soft);
+  font: inherit; font-size: 11px; max-width: 22px; border-radius: 6px; padding: 3px 1px;
+}
+.task:hover .task-move, .task:focus-within .task-move, .task-del:focus, .task-move:focus { opacity: 1; }
+.task-move:hover { color: var(--channel); background: var(--channel-tint); }
+
+.completed-toggle {
+  font-size: 12px; color: var(--ink-soft); background: none; border: none; text-align: left; padding: 2px 4px;
+}
+.completed-toggle:hover { color: var(--ink); }
+
+.quick-add { display: flex; gap: 6px; margin-top: 2px; }
+.quick-add input {
+  flex: 1; min-width: 0; background: var(--surface-recessed); border: 1px dashed var(--line); border-radius: 9px;
+  padding: 7px 10px; font: inherit; font-size: 13.5px; color: var(--ink);
+}
+.quick-add input:focus { outline: 2px solid var(--hue, var(--channel)); outline-offset: 1px; border-style: solid; }
+.quick-add button {
+  flex: none; border: none; background: var(--hue-tint, var(--channel-tint)); color: var(--hue, var(--channel)); border-radius: 9px;
+  width: 32px; font-weight: 700;
+}
+.quick-add button:hover { filter: brightness(0.97); }
+.channel-empty { font-size: 13px; color: var(--ink-soft); font-style: italic; padding: 4px; }
+.channel-foot { display: flex; justify-content: flex-end; }
+
+.new-channel {
+  border: 1.5px dashed rgba(255,255,255,0.55); border-radius: 16px; min-height: 96px;
+  display: flex; align-items: center; justify-content: center; color: var(--on-paper);
+  background: rgba(255,255,255,0.22); font-weight: 600; font-size: 14px;
+}
+.new-channel:hover { border-color: var(--channel); color: var(--channel); background: rgba(255,255,255,0.32); }
+
+/* ---------- rewards rail ---------- */
+.rail-card {
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
+  padding: 16px; box-shadow: var(--shadow);
+}
+.reward { border-bottom: 1px solid var(--line); padding: 12px 0; }
+.reward:last-of-type { border-bottom: none; }
+.reward-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.reward-title { font-weight: 600; font-size: 14.5px; flex: 1; min-width: 0; word-break: break-word; }
+.reward-cost { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); flex: none; }
+.reward-bar { height: 6px; border-radius: 999px; background: var(--surface-recessed); border: 1px solid var(--line); margin: 8px 0; overflow: hidden; }
+.reward-bar > i { display: block; height: 100%; background: var(--spark); border-radius: 999px; transition: width 300ms ease; }
+.reward-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.reward-del { border: none; background: none; color: var(--ink-soft); font-size: 12px; padding: 4px 6px; }
+.reward-del:hover { color: var(--danger); }
+
+.add-reward { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.add-reward-row { display: flex; gap: 6px; }
+.add-reward input[type="text"] {
+  flex: 1; min-width: 0; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 9px;
+  padding: 8px 10px; font: inherit; font-size: 13.5px; color: var(--ink);
+}
+.add-reward input[type="number"] {
+  width: 68px; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 9px;
+  padding: 8px 8px; font: inherit; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink);
+}
+.add-reward input:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
+
+.redeem-log { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.redeem-log summary { font-size: 12px; color: var(--ink-soft); cursor: pointer; list-style: none; }
+.redeem-log summary::-webkit-details-marker { display: none; }
+.redeem-log summary:hover { color: var(--ink); }
+.redeem-item { font-size: 12.5px; color: var(--ink-soft); padding: 5px 0 0 2px; }
+.redeem-item b { color: var(--ink); font-weight: 600; }
+
+/* ---------- ideas vault ---------- */
+.idea-card {
+  background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: 18px; padding: 20px 22px; box-shadow: var(--shadow); margin-bottom: 24px;
+}
+.idea-card h2 { font-size: 21px; font-weight: 600; margin-bottom: 4px; }
+.idea-card .sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 14px; }
+.idea-form { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+.idea-form .full { grid-column: 1 / -1; }
+.idea-form input, .idea-form textarea {
+  width: 100%; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 12px; font: inherit; font-size: 14px; color: var(--ink);
+}
+.idea-form textarea { min-height: 64px; resize: vertical; }
+.idea-form input:focus, .idea-form textarea:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
+.idea-form-foot { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+@media (max-width: 560px) { .idea-form { grid-template-columns: 1fr; } }
+
+.idea-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.idea-filter {
+  border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink-soft);
+  border-radius: 999px; padding: 5px 13px; font-size: 12.5px; font-weight: 600;
+}
+.idea-filter[aria-pressed="true"] { background: var(--channel); border-color: var(--channel); color: #fff; }
+
+.ideas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
+.idea {
+  background: var(--paper-raised); border: 1px solid var(--line); border-left: 5px solid var(--hue, var(--channel));
+  border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px;
+}
+.idea-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.idea-title {
+  font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; flex: 1; min-width: 0;
+  text-overflow: ellipsis;
+  background: none; border: none; color: var(--ink); padding: 1px 3px; border-radius: 5px;
+}
+.idea-title:hover, .idea-title:focus { background: var(--hue-tint, var(--channel-tint)); outline: none; }
+.idea-del {
+  flex: none; opacity: 0; border: none; background: none; color: var(--ink-soft);
+  width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+}
+.idea:hover .idea-del, .idea-del:focus { opacity: 1; }
+.idea-del:hover { color: var(--danger); background: var(--danger-tint); }
+.idea-del svg { width: 13px; height: 13px; }
+.idea-tag {
+  align-self: flex-start; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--hue, var(--channel)); background: var(--hue-tint, var(--channel-tint)); border-radius: 999px; padding: 2px 9px;
+}
+.idea-note {
+  font-size: 13.5px; color: var(--ink-soft); white-space: pre-wrap; word-break: break-word;
+  background: none; border: none; width: 100%; padding: 0; resize: vertical; font-family: inherit;
+}
+.idea-note:focus { outline: 2px solid var(--hue, var(--channel)); outline-offset: 1px; border-radius: 4px; }
+.idea-link {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600;
+  color: var(--hue, var(--channel)); text-decoration: none; border: 1px solid var(--hue-tint, var(--channel-tint));
+  border-radius: 999px; padding: 4px 11px;
+}
+.idea-link:hover { background: var(--hue-tint, var(--channel-tint)); }
+.idea-link svg { width: 11px; height: 11px; }
+.ideas-empty { font-size: 13.5px; color: var(--ink-soft); font-style: italic; padding: 10px 4px; }
+
+/* ---------- export modal ---------- */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(20,15,35,0.5); display: flex;
+  align-items: center; justify-content: center; padding: 24px; z-index: 50;
+}
+.modal-backdrop[hidden] { display: none; }
+.modal {
+  background: var(--paper-raised); border-radius: 18px; padding: 22px; max-width: 640px; width: 100%;
+  max-height: 80vh; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow);
+}
+.modal h3 { font-size: 18px; font-weight: 600; }
+.modal p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+.modal textarea {
+  flex: 1; min-height: 260px; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink); resize: vertical;
+}
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; }
+
+::selection { background: var(--spark-tint); }
+</style>
+
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand">
+      <h1>Brain Dump</h1>
+      <span class="tag">let it out, sort it later</span>
+    </div>
+    <div class="point-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:var(--spark)" stroke-width="1.8"><path d="M12 3c3.5 4 6 7.2 6 10.5a6 6 0 1 1-12 0C6 10.2 8.5 7 12 3Z"/></svg>
+      <span><span class="num" id="pointTotal">0</span> <span class="lbl">pts</span></span>
+      <div class="float-layer" id="floatLayer"></div>
+    </div>
+  </header>
+
+  <svg class="wave" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="var(--ch0)"/>
+        <stop offset="20%" stop-color="var(--ch5)"/>
+        <stop offset="40%" stop-color="var(--ch2)"/>
+        <stop offset="60%" stop-color="var(--ch1)"/>
+        <stop offset="80%" stop-color="var(--ch4)"/>
+        <stop offset="100%" stop-color="var(--ch3)"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,20 C100,2 200,38 300,20 C400,2 500,38 600,20 C700,2 800,38 900,20 C1000,2 1100,38 1200,20" fill="none" stroke="url(#waveGrad)" stroke-width="3.5" stroke-linecap="round"/>
+  </svg>
+
+  <div class="toolbar">
+    <div class="tabs" role="tablist">
+      <button class="tab-btn" id="tabDump" role="tab" aria-selected="true">Brain Dump</button>
+      <button class="tab-btn" id="tabIdeas" role="tab" aria-selected="false">Ideas Vault</button>
+    </div>
+    <div class="toolbar-right">
+      <div class="scheme-picker" id="schemePicker" role="group" aria-label="Light or dark mode">
+        <button class="scheme-btn" data-scheme="" aria-pressed="true">Auto</button>
+        <button class="scheme-btn" data-scheme="light" aria-pressed="false">Light</button>
+        <button class="scheme-btn" data-scheme="dark" aria-pressed="false">Dark</button>
+      </div>
+      <div class="theme-picker" id="themePicker" role="group" aria-label="Colour theme">
+        <button class="swatch" data-theme-choice="" style="background:#B9A6FF" aria-label="Classic violet" aria-pressed="true"></button>
+        <button class="swatch" data-theme-choice="coral" style="background:#FF8F73" aria-label="Coral" aria-pressed="false"></button>
+        <button class="swatch" data-theme-choice="navy" style="background:#2C4E8C" aria-label="Navy" aria-pressed="false"></button>
+        <button class="swatch" data-theme-choice="sky" style="background:#29B6FF" aria-label="Sky blue" aria-pressed="false"></button>
+        <button class="swatch" data-theme-choice="beige" style="background:#E3B873" aria-label="Beige" aria-pressed="false"></button>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="exportBtn">Export data</button>
+    </div>
+  </div>
+
+  <section id="viewDump">
+    <div id="banner"></div>
+
+    <section class="dump-card">
+      <div class="dump-head">
+        <div class="mascot-wrap">
+          <svg id="brainMascot" viewBox="0 0 160 130" aria-hidden="true">
+            <g class="brain-sparkle" style="display:none">
+              <path d="M15,14 L17,18 L21,20 L17,22 L15,26 L13,22 L9,20 L13,18 Z" fill="var(--brain-sparkle)"/>
+              <path d="M142,20 L144,24 L148,26 L144,28 L142,32 L140,28 L136,26 L140,24 Z" fill="var(--brain-sparkle)"/>
+              <path d="M80,0 L81.5,3 L84,4 L81.5,5 L80,8 L78.5,5 L76,4 L78.5,3 Z" fill="var(--brain-sparkle)"/>
+            </g>
+            <g class="brain-clutter" style="display:none">
+              <path d="M14,14 q6,-10 12,0 q6,10 12,0" fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+              <path d="M122,16 q6,-10 12,0 q6,10 12,0" fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+            </g>
+            <g class="brain-clutter-extra" style="display:none">
+              <path d="M64,-2 q6,-9 12,0 q6,9 12,0" fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+            </g>
+            <g class="brain-sweat" style="display:none">
+              <path d="M126,10 C130,16 134,22 130,27 C126,31 120,27 121,21 C122,15 124,12 126,10 Z" fill="var(--brain-sweat-fill)" stroke="var(--brain-sweat-line)" stroke-width="1.5"/>
+            </g>
+
+            <ellipse cx="14" cy="78" rx="10" ry="7" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3" transform="rotate(-24 14 78)"/>
+            <ellipse cx="146" cy="78" rx="10" ry="7" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3" transform="rotate(24 146 78)"/>
+
+            <path class="brain-body" d="M80,6 C58,6 41,19 38,37 C16,42 5,64 18,82 C13,102 32,119 55,116 C61,126 99,126 105,116 C128,119 147,102 142,82 C155,64 144,42 122,37 C119,19 102,6 80,6 Z" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M80,20 C72,34 88,46 80,58 C72,70 88,84 81,96 C79,101 80,104 81,107" fill="none" stroke="var(--brain-line)" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>
+            <path d="M38,40 C45,36 49,43 44,48" fill="none" stroke="var(--brain-fold)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M122,40 C115,36 111,43 116,48" fill="none" stroke="var(--brain-fold)" stroke-width="2.5" stroke-linecap="round"/>
+
+            <ellipse cx="52" cy="26" rx="20" ry="11" fill="#FFFFFF" opacity="0.3" transform="rotate(-18 52 26)"/>
+
+            <g class="brain-blush">
+              <ellipse cx="40" cy="72" rx="9" ry="5.5" fill="var(--brain-blush)" opacity="0.55"/>
+              <ellipse cx="120" cy="72" rx="9" ry="5.5" fill="var(--brain-blush)" opacity="0.55"/>
+            </g>
+
+            <g class="face face-clear" style="display:none">
+              <path d="M50,58 Q60,48 70,58" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M90,58 Q100,48 110,58" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M54,78 Q80,106 106,78" fill="none" stroke="var(--ink)" stroke-width="4.4" stroke-linecap="round"/>
+            </g>
+            <g class="face face-light">
+              <circle cx="60" cy="60" r="6.5" fill="var(--ink)"/>
+              <circle cx="100" cy="60" r="6.5" fill="var(--ink)"/>
+              <circle cx="57.7" cy="57.4" r="2" fill="#fff"/>
+              <circle cx="97.7" cy="57.4" r="2" fill="#fff"/>
+              <path d="M58,80 Q80,92 102,80" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+            </g>
+            <g class="face face-busy" style="display:none">
+              <circle cx="60" cy="60" r="6.5" fill="var(--ink)"/>
+              <circle cx="100" cy="60" r="6.5" fill="var(--ink)"/>
+              <circle cx="57.7" cy="57.4" r="2" fill="#fff"/>
+              <circle cx="97.7" cy="57.4" r="2" fill="#fff"/>
+              <path d="M64,83 Q80,88 96,83" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+            </g>
+            <g class="face face-full" style="display:none">
+              <path d="M48,52 L63,58" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M112,52 L97,58" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="60" cy="64" r="6" fill="var(--ink)"/>
+              <circle cx="100" cy="64" r="6" fill="var(--ink)"/>
+              <circle cx="57.7" cy="61.4" r="1.8" fill="#fff"/>
+              <circle cx="97.7" cy="61.4" r="1.8" fill="#fff"/>
+              <path d="M58,86 L67,80 L76,86 L85,80 L94,86 L103,80" fill="none" stroke="var(--ink)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </svg>
+          <span class="mascot-caption" id="mascotCaption">All clear</span>
+        </div>
+        <div>
+          <h2>What's rattling around today?</h2>
+          <p class="sub">Dump every thought, task, and worry in one go &mdash; don't organize, just write. Brain Dump will sort it into channels, and your brain gets to relax.</p>
+        </div>
+      </div>
+      <textarea id="dumpText" placeholder="e.g. need to call the dentist back, mom's birthday is coming up and I have no idea what to get her, that report is due friday and I haven't started, dishes are piling up, I keep forgetting to drink water..."></textarea>
+      <div class="dump-foot">
+        <div>
+          <div class="dump-status" id="dumpStatus"></div>
+          <div class="dump-hint" id="dumpHint">Tip: <kbd>&#8984;/Ctrl</kbd> + <kbd>Enter</kbd> to sort &middot; everything lands in &ldquo;Unsorted&rdquo; &mdash; move tasks into real channels after</div>
+        </div>
+        <div class="dump-actions">
+          <button class="btn btn-primary" id="sortBtn" disabled>Sort it out</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div>
+        <div class="section-label">Your channels</div>
+        <div class="channels" id="channelsGrid"></div>
+      </div>
+      <aside>
+        <div class="section-label">Rewards</div>
+        <div class="rail-card">
+          <div id="rewardsList"></div>
+          <form class="add-reward" id="rewardForm">
+            <div class="add-reward-row">
+              <input type="text" id="rewardTitle" placeholder="New reward, e.g. Episode of a show" maxlength="60" required>
+              <input type="number" id="rewardCost" placeholder="pts" min="5" max="2000" step="5" required>
+            </div>
+            <button type="submit" class="btn btn-ghost btn-sm">+ Add reward</button>
+          </form>
+          <details class="redeem-log" id="redeemLogWrap" style="display:none">
+            <summary>Recently redeemed</summary>
+            <div id="redeemLog"></div>
+          </details>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="viewIdeas" hidden>
+    <section class="idea-card">
+      <h2>Somewhere for the sparks</h2>
+      <p class="sub">Business ideas, side hustles, a thing you saw on social media and want to try &mdash; catch it here before it slips away.</p>
+      <form class="idea-form" id="ideaForm">
+        <input type="text" id="ideaTitle" class="full" placeholder="The idea, in a few words&hellip;" maxlength="80" required>
+        <input type="text" id="ideaTag" placeholder="Tag (optional) &mdash; Business, Side hustle, Inspo&hellip;" maxlength="20">
+        <input type="url" id="ideaLink" placeholder="Link (optional) &mdash; paste a URL">
+        <textarea id="ideaNote" class="full" placeholder="Notes (optional)&hellip;" maxlength="600"></textarea>
+        <div class="idea-form-foot">
+          <button type="submit" class="btn btn-primary btn-sm">Save idea</button>
+        </div>
+      </form>
+    </section>
+    <div class="idea-filters" id="ideaFilters"></div>
+    <div class="ideas-grid" id="ideasGrid"></div>
+  </section>
+</div>
+
+<div class="modal-backdrop" id="exportModalBackdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
+    <h3 id="exportModalTitle">Your Brain Dump export</h3>
+    <p id="exportModalHint">Save this file, or select all and copy it &mdash; paste it into a chat with Claude any time you want help figuring out what to do next.</p>
+    <textarea id="exportText" readonly></textarea>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" id="exportCopyBtn">Copy to clipboard</button>
+      <button class="btn btn-primary btn-sm" id="exportCloseBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "spillway_state_v1";
+  var THEME_KEY = "spillway_theme_v1";
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function uid() {
+    try { return crypto.randomUUID(); } catch (e) { return "id-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2); }
+  }
+
+  function demoState() {
+    return {
+      points: 15,
+      isDemoData: true,
+      channels: [
+        {
+          id: uid(), name: "Errands",
+          tasks: [
+            { id: uid(), text: "Call the dentist to reschedule", points: 10, done: false },
+            { id: uid(), text: "Pick up prescription", points: 5, done: false },
+            { id: uid(), text: "Return the library books", points: 5, done: true }
+          ]
+        },
+        {
+          id: uid(), name: "Work",
+          tasks: [
+            { id: uid(), text: "Outline the quarterly report", points: 15, done: false },
+            { id: uid(), text: "Reply to Jordan's email", points: 5, done: true }
+          ]
+        }
+      ],
+      rewards: [
+        { id: uid(), title: "Episode of a show", cost: 25 },
+        { id: uid(), title: "Takeout for dinner", cost: 60 }
+      ],
+      redeemLog: [],
+      ideas: [
+        {
+          id: uid(), title: "Sell hand-poured candles at weekend markets", tag: "Side hustle",
+          link: "", note: "Saw a stall doing this near the farmer's market — look into local stall fees.", createdAt: Date.now()
+        },
+        {
+          id: uid(), title: "Try that overnight oats recipe", tag: "Inspo",
+          link: "", note: "From a video someone sent me.", createdAt: Date.now()
+        }
+      ]
+    };
+  }
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return demoState();
+      var parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.channels)) return demoState();
+      if (!Array.isArray(parsed.ideas)) parsed.ideas = [];
+      return parsed;
+    } catch (e) { return demoState(); }
+  }
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
+  }
+
+  var state = load();
+  var downloadsFn = null;
+  var activeIdeaFilter = "";
+
+  // ---------- rendering ----------
+
+  var pointTotalEl = document.getElementById("pointTotal");
+  var floatLayer = document.getElementById("floatLayer");
+  var channelsGrid = document.getElementById("channelsGrid");
+  var rewardsList = document.getElementById("rewardsList");
+  var rewardForm = document.getElementById("rewardForm");
+  var redeemLogWrap = document.getElementById("redeemLogWrap");
+  var redeemLogEl = document.getElementById("redeemLog");
+  var bannerEl = document.getElementById("banner");
+  var dumpTextEl = document.getElementById("dumpText");
+  var dumpStatusEl = document.getElementById("dumpStatus");
+  var dumpHintEl = document.getElementById("dumpHint");
+  var sortBtn = document.getElementById("sortBtn");
+  var ideasGrid = document.getElementById("ideasGrid");
+  var ideaFiltersEl = document.getElementById("ideaFilters");
+  var ideaForm = document.getElementById("ideaForm");
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function hueIndexFor(key) {
+    var str = String(key || "");
+    var h = 0;
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    return h % 6;
+  }
+
+  function popFloat(delta) {
+    if (reduceMotion) return;
+    var span = document.createElement("span");
+    span.className = "float-pop " + (delta >= 0 ? "gain" : "loss");
+    span.textContent = (delta >= 0 ? "+" : "") + delta;
+    floatLayer.appendChild(span);
+    setTimeout(function () { span.remove(); }, 1200);
+  }
+
+  function renderPoints() {
+    pointTotalEl.textContent = state.points;
+  }
+
+  function renderBanner() {
+    if (!state.isDemoData) { bannerEl.innerHTML = ""; return; }
+    bannerEl.innerHTML =
+      '<div class="banner"><span>This is example data so you can see how Brain Dump works &mdash; sort your own dump above to replace it.</span>' +
+      '<button class="btn btn-ghost btn-sm" id="dismissDemo">Clear example data</button></div>';
+    document.getElementById("dismissDemo").onclick = function () {
+      state.isDemoData = false;
+      state.channels = [];
+      state.points = 0;
+      save();
+      renderAll();
+    };
+  }
+
+  function taskRow(channel, task) {
+    var checkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg>';
+    var delSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 6h14M9 6V4h6v2M7 6l1 14h8l1-14"/></svg>';
+    var others = state.channels.filter(function (c) { return c.id !== channel.id; });
+    var moveOptions = '<option value="" selected disabled hidden>Move</option>' +
+      others.map(function (c) { return '<option value="' + c.id + '">&rarr; ' + esc(c.name) + '</option>'; }).join("");
+    var moveSelect = others.length
+      ? '<select class="task-move" data-action="move-task" aria-label="Move task to another channel">' + moveOptions + '</select>'
+      : "";
+    return (
+      '<div class="task' + (task.done ? " done" : "") + '" data-task="' + task.id + '">' +
+        '<button class="task-check" data-action="toggle" aria-label="Mark task complete">' + checkSvg + '</button>' +
+        '<span class="task-text">' + esc(task.text) + '</span>' +
+        '<span class="task-points">' + task.points + '</span>' +
+        moveSelect +
+        '<button class="task-del" data-action="delete-task" aria-label="Delete task">' + delSvg + '</button>' +
+      '</div>'
+    );
+  }
+
+  function renderChannels() {
+    var html = "";
+    state.channels.forEach(function (ch, idx) {
+      var hue = idx % 6;
+      var open = ch.tasks.filter(function (t) { return !t.done; });
+      var done = ch.tasks.filter(function (t) { return t.done; });
+      html += '<div class="channel" data-channel="' + ch.id + '" style="--hue:var(--ch' + hue + ');--hue-tint:var(--ch' + hue + '-tint)">';
+      html += '<div class="channel-head">';
+      html += '<input class="channel-name" data-action="rename" value="' + esc(ch.name) + '" maxlength="24">';
+      html += '<span class="channel-count">' + open.length + '</span>';
+      html += '</div>';
+      html += '<div class="task-list">';
+      if (open.length === 0 && done.length === 0) {
+        html += '<div class="channel-empty">Nothing here yet.</div>';
+      }
+      open.forEach(function (t) { html += taskRow(ch, t); });
+      html += '</div>';
+      if (done.length) {
+        html += '<details><summary class="completed-toggle">Completed (' + done.length + ')</summary><div class="task-list" style="margin-top:6px">';
+        done.forEach(function (t) { html += taskRow(ch, t); });
+        html += '</div></details>';
+      }
+      html += '<form class="quick-add" data-action="quick-add">' +
+        '<input type="text" placeholder="Add a task&hellip;" maxlength="140" data-role="quick-add-input">' +
+        '<button type="submit" aria-label="Add task">+</button></form>';
+      if (open.length === 0 && done.length === 0) {
+        html += '<div class="channel-foot"><button class="btn-quiet" data-action="delete-channel">Remove channel</button></div>';
+      }
+      html += '</div>';
+    });
+    html += '<button class="new-channel" id="addChannelBtn">+ New channel</button>';
+    channelsGrid.innerHTML = html;
+    document.getElementById("addChannelBtn").onclick = function () {
+      var name = prompt("Name this channel:");
+      if (!name) return;
+      state.channels.push({ id: uid(), name: name.trim().slice(0, 24) || "Untitled", tasks: [] });
+      state.isDemoData = false;
+      save();
+      renderAll();
+    };
+  }
+
+  function renderRewards() {
+    if (!state.rewards.length) {
+      rewardsList.innerHTML = '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 4px">No rewards yet &mdash; set a benchmark below.</p>';
+    } else {
+      var html = "";
+      state.rewards.slice().sort(function (a, b) { return a.cost - b.cost; }).forEach(function (r) {
+        var pct = Math.max(0, Math.min(100, Math.round((state.points / r.cost) * 100)));
+        var can = state.points >= r.cost;
+        html += '<div class="reward" data-reward="' + r.id + '">';
+        html += '<div class="reward-top"><span class="reward-title">' + esc(r.title) + '</span><span class="reward-cost">' + r.cost + ' pts</span></div>';
+        html += '<div class="reward-bar"><i style="width:' + pct + '%"></i></div>';
+        html += '<div class="reward-row">';
+        html += '<button class="btn btn-primary btn-sm" data-action="redeem" ' + (can ? "" : "disabled") + '>Redeem</button>';
+        html += '<button class="reward-del" data-action="delete-reward">Remove</button>';
+        html += '</div></div>';
+      });
+      rewardsList.innerHTML = html;
+    }
+    if (state.redeemLog && state.redeemLog.length) {
+      redeemLogWrap.style.display = "";
+      redeemLogEl.innerHTML = state.redeemLog.slice(0, 6).map(function (r) {
+        return '<div class="redeem-item"><b>' + esc(r.title) + '</b> &middot; &minus;' + r.cost + ' pts</div>';
+      }).join("");
+    } else {
+      redeemLogWrap.style.display = "none";
+    }
+  }
+
+  // ---------- ideas vault ----------
+
+  function renderIdeas() {
+    var tags = Array.from(new Set(state.ideas.map(function (i) { return (i.tag || "").trim(); }).filter(Boolean)));
+    if (activeIdeaFilter && tags.indexOf(activeIdeaFilter) === -1) activeIdeaFilter = "";
+
+    if (!tags.length) {
+      ideaFiltersEl.innerHTML = "";
+    } else {
+      var filterHtml = '<button class="idea-filter" data-filter="" aria-pressed="' + (activeIdeaFilter === "" ? "true" : "false") + '">All</button>';
+      tags.forEach(function (t) {
+        filterHtml += '<button class="idea-filter" data-filter="' + esc(t) + '" aria-pressed="' + (activeIdeaFilter === t ? "true" : "false") + '">' + esc(t) + '</button>';
+      });
+      ideaFiltersEl.innerHTML = filterHtml;
+    }
+
+    var list = state.ideas.slice().sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+    if (activeIdeaFilter) list = list.filter(function (i) { return (i.tag || "").trim() === activeIdeaFilter; });
+
+    if (!list.length) {
+      ideasGrid.innerHTML = '<div class="ideas-empty">' + (state.ideas.length ? "Nothing with that tag yet." : "No ideas saved yet — jot one down above, or paste a link you want to come back to.") + '</div>';
+      return;
+    }
+
+    var linkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14 21 3M21 3h-6M21 3v6"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+    var delSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 6h14M9 6V4h6v2M7 6l1 14h8l1-14"/></svg>';
+
+    ideasGrid.innerHTML = list.map(function (idea) {
+      var hue = hueIndexFor(idea.tag || idea.id);
+      var html = '<div class="idea" data-idea="' + idea.id + '" style="--hue:var(--ch' + hue + ');--hue-tint:var(--ch' + hue + '-tint)">';
+      html += '<div class="idea-top">';
+      html += '<input class="idea-title" data-action="rename-idea" value="' + esc(idea.title) + '" maxlength="80">';
+      html += '<button class="idea-del" data-action="delete-idea" aria-label="Delete idea">' + delSvg + '</button>';
+      html += '</div>';
+      if (idea.tag) html += '<span class="idea-tag">' + esc(idea.tag) + '</span>';
+      if (idea.link) html += '<a class="idea-link" href="' + esc(idea.link) + '" target="_blank" rel="noopener noreferrer">' + linkSvg + ' Open link</a>';
+      html += '<textarea class="idea-note" data-action="note-idea" rows="2" placeholder="Notes&hellip;">' + esc(idea.note || "") + '</textarea>';
+      html += '</div>';
+      return html;
+    }).join("");
+  }
+
+  ideaFiltersEl.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-filter]");
+    if (!btn) return;
+    activeIdeaFilter = btn.dataset.filter;
+    renderIdeas();
+  });
+
+  ideaForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var titleEl = document.getElementById("ideaTitle");
+    var tagEl = document.getElementById("ideaTag");
+    var linkEl = document.getElementById("ideaLink");
+    var noteEl = document.getElementById("ideaNote");
+    var title = titleEl.value.trim();
+    if (!title) return;
+    var link = linkEl.value.trim();
+    if (link && !/^https?:\/\//i.test(link)) link = "https://" + link;
+    state.ideas.unshift({
+      id: uid(), title: title.slice(0, 80), tag: tagEl.value.trim().slice(0, 20),
+      link: link, note: noteEl.value.trim().slice(0, 600), createdAt: Date.now()
+    });
+    titleEl.value = ""; tagEl.value = ""; linkEl.value = ""; noteEl.value = "";
+    save();
+    renderIdeas();
+    titleEl.focus();
+  });
+
+  ideasGrid.addEventListener("click", function (e) {
+    var btn = e.target.closest('button[data-action="delete-idea"]');
+    if (!btn) return;
+    var ideaEl = btn.closest("[data-idea]");
+    state.ideas = state.ideas.filter(function (i) { return i.id !== ideaEl.dataset.idea; });
+    save();
+    renderIdeas();
+  });
+
+  ideasGrid.addEventListener("change", function (e) {
+    var ideaEl = e.target.closest("[data-idea]");
+    if (!ideaEl) return;
+    var idea = state.ideas.find(function (i) { return i.id === ideaEl.dataset.idea; });
+    if (!idea) return;
+    if (e.target.dataset.action === "rename-idea") {
+      var t = e.target.value.trim();
+      idea.title = t || idea.title;
+      e.target.value = idea.title;
+      save();
+    } else if (e.target.dataset.action === "note-idea") {
+      idea.note = e.target.value.trim().slice(0, 600);
+      save();
+    }
+  });
+
+  // ---------- tabs ----------
+
+  var tabDump = document.getElementById("tabDump");
+  var tabIdeas = document.getElementById("tabIdeas");
+  var viewDump = document.getElementById("viewDump");
+  var viewIdeas = document.getElementById("viewIdeas");
+
+  function showView(name) {
+    var onIdeas = name === "ideas";
+    viewDump.hidden = onIdeas;
+    viewIdeas.hidden = !onIdeas;
+    tabDump.setAttribute("aria-selected", String(!onIdeas));
+    tabIdeas.setAttribute("aria-selected", String(onIdeas));
+  }
+  tabDump.addEventListener("click", function () { showView("dump"); });
+  tabIdeas.addEventListener("click", function () { showView("ideas"); renderIdeas(); });
+
+  // ---------- theme picker ----------
+
+  var themePicker = document.getElementById("themePicker");
+  function applyAccent(accent, persist) {
+    if (accent) document.documentElement.setAttribute("data-accent", accent);
+    else document.documentElement.removeAttribute("data-accent");
+    themePicker.querySelectorAll(".swatch").forEach(function (sw) {
+      sw.setAttribute("aria-pressed", String(sw.dataset.themeChoice === accent));
+    });
+    if (persist) {
+      try { localStorage.setItem(THEME_KEY, accent || ""); } catch (e) { /* storage unavailable */ }
+    }
+  }
+  themePicker.addEventListener("click", function (e) {
+    var sw = e.target.closest(".swatch");
+    if (!sw) return;
+    applyAccent(sw.dataset.themeChoice, true);
+  });
+  (function initTheme() {
+    var saved = "";
+    try { saved = localStorage.getItem(THEME_KEY) || ""; } catch (e) { /* storage unavailable */ }
+    applyAccent(saved, false);
+  })();
+
+  // ---------- light/dark scheme picker ----------
+
+  var SCHEME_KEY = "spillway_scheme_v1";
+  var schemePicker = document.getElementById("schemePicker");
+  function applyScheme(scheme, persist) {
+    if (scheme) document.documentElement.setAttribute("data-theme", scheme);
+    else document.documentElement.removeAttribute("data-theme");
+    schemePicker.querySelectorAll(".scheme-btn").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.dataset.scheme === scheme));
+    });
+    if (persist) {
+      try { localStorage.setItem(SCHEME_KEY, scheme || ""); } catch (e) { /* storage unavailable */ }
+    }
+  }
+  schemePicker.addEventListener("click", function (e) {
+    var btn = e.target.closest(".scheme-btn");
+    if (!btn) return;
+    applyScheme(btn.dataset.scheme, true);
+  });
+  (function initScheme() {
+    var saved = "";
+    try { saved = localStorage.getItem(SCHEME_KEY) || ""; } catch (e) { /* storage unavailable */ }
+    applyScheme(saved, false);
+  })();
+
+  var mascotSvg = document.getElementById("brainMascot");
+  var mascotCaptionEl = document.getElementById("mascotCaption");
+  var MOOD_CAPTIONS = { clear: "All clear!", light: "Feeling good", busy: "A lot going on", full: "Pretty full up" };
+
+  function renderMascot() {
+    var totalOpen = state.channels.reduce(function (sum, c) {
+      return sum + c.tasks.filter(function (t) { return !t.done; }).length;
+    }, 0);
+    var mood = totalOpen === 0 ? "clear" : totalOpen <= 3 ? "light" : totalOpen <= 8 ? "busy" : "full";
+    mascotSvg.querySelectorAll(".face").forEach(function (el) { el.style.display = "none"; });
+    var activeFace = mascotSvg.querySelector(".face-" + mood);
+    if (activeFace) activeFace.style.display = "";
+    mascotSvg.querySelector(".brain-sparkle").style.display = mood === "clear" ? "" : "none";
+    mascotSvg.querySelector(".brain-clutter").style.display = (mood === "busy" || mood === "full") ? "" : "none";
+    mascotSvg.querySelector(".brain-clutter-extra").style.display = mood === "full" ? "" : "none";
+    mascotSvg.querySelector(".brain-sweat").style.display = mood === "full" ? "" : "none";
+    mascotCaptionEl.textContent = MOOD_CAPTIONS[mood];
+  }
+
+  function renderAll() {
+    renderPoints();
+    renderBanner();
+    renderChannels();
+    renderRewards();
+    renderMascot();
+    renderIdeas();
+  }
+
+  // ---------- task/channel interactions ----------
+
+  channelsGrid.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    var chEl = btn.closest("[data-channel]");
+    var channel = state.channels.find(function (c) { return c.id === chEl.dataset.channel; });
+    if (!channel) return;
+
+    if (btn.dataset.action === "toggle") {
+      var taskEl = btn.closest("[data-task]");
+      var task = channel.tasks.find(function (t) { return t.id === taskEl.dataset.task; });
+      if (!task) return;
+      task.done = !task.done;
+      state.points += task.done ? task.points : -task.points;
+      if (state.points < 0) state.points = 0;
+      popFloat(task.done ? task.points : -task.points);
+      save();
+      renderAll();
+    } else if (btn.dataset.action === "delete-task") {
+      var taskEl2 = btn.closest("[data-task]");
+      channel.tasks = channel.tasks.filter(function (t) { return t.id !== taskEl2.dataset.task; });
+      save();
+      renderAll();
+    } else if (btn.dataset.action === "delete-channel") {
+      state.channels = state.channels.filter(function (c) { return c.id !== channel.id; });
+      save();
+      renderAll();
+    }
+  });
+
+  channelsGrid.addEventListener("submit", function (e) {
+    var form = e.target.closest('[data-action="quick-add"]');
+    if (!form) return;
+    e.preventDefault();
+    var chEl = form.closest("[data-channel]");
+    var channel = state.channels.find(function (c) { return c.id === chEl.dataset.channel; });
+    var input = form.querySelector('[data-role="quick-add-input"]');
+    var text = input.value.trim();
+    if (!text || !channel) return;
+    channel.tasks.push({ id: uid(), text: text, points: 10, done: false });
+    state.isDemoData = false;
+    save();
+    renderAll();
+    var again = channelsGrid.querySelector('[data-channel="' + channel.id + '"] [data-role="quick-add-input"]');
+    if (again) again.focus();
+  });
+
+  channelsGrid.addEventListener("change", function (e) {
+    if (e.target.dataset.action === "rename") {
+      var chEl = e.target.closest("[data-channel]");
+      var channel = state.channels.find(function (c) { return c.id === chEl.dataset.channel; });
+      if (!channel) return;
+      var name = e.target.value.trim();
+      channel.name = name || channel.name;
+      e.target.value = channel.name;
+      save();
+    } else if (e.target.dataset.action === "move-task") {
+      var fromEl = e.target.closest("[data-channel]");
+      var fromChannel = state.channels.find(function (c) { return c.id === fromEl.dataset.channel; });
+      var taskEl = e.target.closest("[data-task]");
+      var toChannel = state.channels.find(function (c) { return c.id === e.target.value; });
+      if (!fromChannel || !toChannel || !taskEl) return;
+      var taskIdx = fromChannel.tasks.findIndex(function (t) { return t.id === taskEl.dataset.task; });
+      if (taskIdx === -1) return;
+      var task = fromChannel.tasks.splice(taskIdx, 1)[0];
+      toChannel.tasks.unshift(task);
+      save();
+      renderAll();
+    }
+  });
+
+  // ---------- rewards interactions ----------
+
+  rewardsList.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    var rEl = btn.closest("[data-reward]");
+    var reward = state.rewards.find(function (r) { return r.id === rEl.dataset.reward; });
+    if (!reward) return;
+    if (btn.dataset.action === "redeem" && state.points >= reward.cost) {
+      state.points -= reward.cost;
+      state.redeemLog.unshift({ title: reward.title, cost: reward.cost, ts: Date.now() });
+      state.redeemLog = state.redeemLog.slice(0, 10);
+      popFloat(-reward.cost);
+      save();
+      renderAll();
+    } else if (btn.dataset.action === "delete-reward") {
+      state.rewards = state.rewards.filter(function (r) { return r.id !== reward.id; });
+      save();
+      renderAll();
+    }
+  });
+
+  rewardForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var titleEl = document.getElementById("rewardTitle");
+    var costEl = document.getElementById("rewardCost");
+    var title = titleEl.value.trim();
+    var cost = parseInt(costEl.value, 10);
+    if (!title || !cost || cost <= 0) return;
+    state.rewards.push({ id: uid(), title: title.slice(0, 60), cost: cost });
+    titleEl.value = "";
+    costEl.value = "";
+    save();
+    renderAll();
+    titleEl.focus();
+  });
+
+  // ---------- brain dump sorting ----------
+
+  dumpTextEl.addEventListener("input", function () {
+    sortBtn.disabled = dumpTextEl.value.trim().length === 0;
+  });
+
+  dumpTextEl.addEventListener("keydown", function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      e.preventDefault();
+      if (!sortBtn.disabled) sortBtn.click();
+    }
+  });
+
+  function setDumpStatus(msg, type) {
+    dumpStatusEl.textContent = msg || "";
+    dumpStatusEl.className = "dump-status" + (type ? " " + type : "");
+  }
+
+  function runSort() {
+    var text = dumpTextEl.value.trim();
+    if (!text) return;
+    var lines = text.split(/\n+|(?<=[.!?])\s+(?=[A-Z])/).map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!lines.length) return;
+    var channel = state.channels.find(function (c) { return c.name.toLowerCase() === "unsorted"; });
+    if (!channel) {
+      channel = { id: uid(), name: "Unsorted", tasks: [] };
+      state.channels.unshift(channel);
+    }
+    lines.forEach(function (line) {
+      channel.tasks.unshift({ id: uid(), text: line.slice(0, 140), points: 10, done: false });
+    });
+    state.isDemoData = false;
+    dumpTextEl.value = "";
+    sortBtn.disabled = true;
+    save();
+    renderAll();
+    setDumpStatus("Sorted into “Unsorted” — move each task into a real channel with its move menu whenever you're ready.", "info");
+  }
+
+  sortBtn.addEventListener("click", runSort);
+
+  async function initDownloads() {
+    try {
+      if (window.claude && typeof window.claude.use === "function") {
+        downloadsFn = await window.claude.use("downloads");
+      }
+    } catch (e) { downloadsFn = null; }
+  }
+
+  // ---------- export ----------
+
+  function formatDate(ts) {
+    try { return new Date(ts).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }); }
+    catch (e) { return ""; }
+  }
+
+  function buildExport() {
+    var lines = [];
+    lines.push("# Brain Dump export — " + formatDate(Date.now()));
+    lines.push("");
+    lines.push("This is a snapshot of my Brain Dump app: what's on my plate, what I've already cleared, ideas I've saved, and what I'm working toward. Use it to see where my head's at and help me figure out what to focus on.");
+    lines.push("");
+    lines.push("## Snapshot");
+    var totalOpen = state.channels.reduce(function (s, c) { return s + c.tasks.filter(function (t) { return !t.done; }).length; }, 0);
+    var totalDone = state.channels.reduce(function (s, c) { return s + c.tasks.filter(function (t) { return t.done; }).length; }, 0);
+    lines.push("- Points banked: " + state.points);
+    lines.push("- Open tasks: " + totalOpen + " across " + state.channels.length + " channel(s)");
+    lines.push("- Completed tasks (all time, still on record): " + totalDone);
+    lines.push("- Ideas saved: " + state.ideas.length);
+    lines.push("");
+    lines.push("## Channels");
+    if (!state.channels.length) lines.push("_No channels yet._");
+    state.channels.forEach(function (ch) {
+      lines.push("### " + ch.name);
+      var open = ch.tasks.filter(function (t) { return !t.done; });
+      var done = ch.tasks.filter(function (t) { return t.done; });
+      if (!open.length && !done.length) lines.push("_Empty._");
+      open.forEach(function (t) { lines.push("- [ ] " + t.text + " (" + t.points + " pts)"); });
+      done.forEach(function (t) { lines.push("- [x] " + t.text + " (" + t.points + " pts)"); });
+      lines.push("");
+    });
+    lines.push("## Ideas vault");
+    if (!state.ideas.length) lines.push("_No ideas saved yet._");
+    state.ideas.slice().sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); }).forEach(function (idea) {
+      var head = "### " + idea.title + (idea.tag ? "  _[" + idea.tag + "]_" : "");
+      lines.push(head);
+      if (idea.link) lines.push("Link: " + idea.link);
+      if (idea.note) lines.push(idea.note);
+      lines.push("");
+    });
+    lines.push("## Rewards");
+    if (!state.rewards.length) lines.push("_No rewards set yet._");
+    state.rewards.slice().sort(function (a, b) { return a.cost - b.cost; }).forEach(function (r) {
+      lines.push("- " + r.title + " — " + r.cost + " pts" + (state.points >= r.cost ? " (earned!)" : ""));
+    });
+    if (state.redeemLog && state.redeemLog.length) {
+      lines.push("");
+      lines.push("## Recently redeemed");
+      state.redeemLog.slice(0, 10).forEach(function (r) {
+        lines.push("- " + r.title + " — " + r.cost + " pts");
+      });
+    }
+    return lines.join("\n");
+  }
+
+  var exportBtn = document.getElementById("exportBtn");
+  var exportModalBackdrop = document.getElementById("exportModalBackdrop");
+  var exportText = document.getElementById("exportText");
+  var exportModalHint = document.getElementById("exportModalHint");
+  var exportCopyBtn = document.getElementById("exportCopyBtn");
+  var exportCloseBtn = document.getElementById("exportCloseBtn");
+
+  function openExportModal(text, hint) {
+    exportText.value = text;
+    if (hint) exportModalHint.textContent = hint;
+    exportModalBackdrop.hidden = false;
+    exportText.focus();
+    exportText.select();
+  }
+  exportCloseBtn.addEventListener("click", function () { exportModalBackdrop.hidden = true; });
+  exportModalBackdrop.addEventListener("click", function (e) { if (e.target === exportModalBackdrop) exportModalBackdrop.hidden = true; });
+  exportCopyBtn.addEventListener("click", async function () {
+    try {
+      await navigator.clipboard.writeText(exportText.value);
+      exportCopyBtn.textContent = "Copied!";
+      setTimeout(function () { exportCopyBtn.textContent = "Copy to clipboard"; }, 1500);
+    } catch (e) {
+      exportText.select();
+    }
+  });
+
+  exportBtn.addEventListener("click", async function () {
+    var text = buildExport();
+    var filename = "brain-dump-export-" + new Date().toISOString().slice(0, 10) + ".md";
+    if (!downloadsFn) {
+      openExportModal(text, "Downloading isn't available in this view, so here's the full export as text — select all and copy it, or save it as a .md file yourself.");
+      return;
+    }
+    try {
+      await downloadsFn.save({ filename: filename, data: text });
+    } catch (err) {
+      var code = err && err.code;
+      if (code === "declined" || code === "cancelled") return;
+      openExportModal(text, "Couldn't save the file directly, so here's the full export as text instead — select all and copy it.");
+    }
+  });
+
+  renderAll();
+  initDownloads();
+})();
+</script>
