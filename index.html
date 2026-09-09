@@ -1,4 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Brain Dump</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
@@ -20,6 +24,8 @@
   --moss-tint: #DCFCE3;
   --danger: #E23744;
   --danger-tint: #FEE2E4;
+  --feel: #6D5BD0;
+  --feel-tint: #ECE7FB;
   --shadow: 0 1px 2px rgba(36,28,61,0.07), 0 8px 24px -10px rgba(36,28,61,0.25);
 
   --ch0: #FF5A5F; --ch0-tint: #FFE3E4;
@@ -56,6 +62,8 @@
     --moss-tint: #17351F;
     --danger: #FF8087;
     --danger-tint: #3A1A1E;
+    --feel: #B0A3FF;
+    --feel-tint: #2A2350;
     --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 28px -10px rgba(0,0,0,0.6);
 
     --ch0: #FF8A8E; --ch0-tint: #3A1F20;
@@ -91,6 +99,8 @@
   --moss-tint: #17351F;
   --danger: #FF8087;
   --danger-tint: #3A1A1E;
+  --feel: #B0A3FF;
+  --feel-tint: #2A2350;
   --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 28px -10px rgba(0,0,0,0.6);
 
   --ch0: #FF8A8E; --ch0-tint: #3A1F20;
@@ -319,6 +329,7 @@ button { font: inherit; cursor: pointer; }
 
 /* ---------- layout ---------- */
 .layout { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
+.layout[hidden] { display: none; }
 @media (min-width: 900px) {
   .layout { grid-template-columns: minmax(0,1fr) 320px; }
 }
@@ -326,6 +337,20 @@ button { font: inherit; cursor: pointer; }
   font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em;
   color: var(--on-paper-soft); margin-bottom: 12px;
 }
+.focus-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.focus-toggle-row .btn-ghost { background: var(--paper-raised); }
+.focus-card {
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 20px;
+  padding: 36px 28px; box-shadow: var(--shadow); text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 24px;
+}
+.focus-card[hidden] { display: none; }
+.focus-eyebrow { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-soft); }
+.focus-task-text { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; max-width: 480px; text-wrap: balance; }
+.focus-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.focus-actions { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+.focus-empty { padding: 20px; }
+.focus-empty .focus-task-text { font-size: 20px; }
 
 /* ---------- channels ---------- */
 .channels { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
@@ -346,10 +371,35 @@ button { font: inherit; cursor: pointer; }
 }
 .task-list { display: flex; flex-direction: column; gap: 6px; }
 .task {
-  display: flex; align-items: flex-start; gap: 9px;
+  display: flex; flex-direction: column; gap: 6px;
   padding: 7px 8px; border-radius: 10px; transition: background 120ms ease;
 }
 .task:hover { background: var(--surface-recessed); }
+.task-main { display: flex; align-items: flex-start; gap: 9px; }
+.task-sieve { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-left: 29px; }
+.task-urgency {
+  display: flex; align-items: center; gap: 5px; border: 1px solid var(--line); background: var(--paper-raised);
+  border-radius: 999px; padding: 3px 10px 3px 6px; font-size: 11px; font-weight: 600; color: var(--ink-soft);
+}
+.task-urgency .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex: none; }
+.task-urgency[data-urgency="now"] { color: var(--danger); background: var(--danger-tint); border-color: var(--danger-tint); }
+.task-urgency[data-urgency="now"] .dot { background: var(--danger); }
+.task-urgency[data-urgency="soon"] { color: var(--spark); background: var(--spark-tint); border-color: var(--spark-tint); }
+.task-urgency[data-urgency="soon"] .dot { background: var(--spark); }
+.task-urgency[data-urgency="someday"] { color: var(--moss); background: var(--moss-tint); border-color: var(--moss-tint); }
+.task-urgency[data-urgency="someday"] .dot { background: var(--moss); }
+.task-date {
+  border: 1px solid var(--line); background: var(--paper-raised); border-radius: 999px; padding: 3px 9px;
+  font: inherit; font-size: 11px; font-weight: 600; color: var(--ink-soft); max-width: 118px;
+}
+.task-date.has-date { color: var(--channel); background: var(--channel-tint); border-color: var(--channel-tint); }
+.task-idea, .task-feel {
+  flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper-raised);
+  color: var(--ink-soft); display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.task-idea svg, .task-feel svg { width: 14px; height: 14px; }
+.task-idea:hover { color: var(--spark); background: var(--spark-tint); border-color: var(--spark-tint); }
+.task-feel:hover { color: var(--feel); background: var(--feel-tint); border-color: var(--feel-tint); }
 .task-check {
   flex: none; width: 20px; height: 20px; border-radius: 6px; margin-top: 1px;
   border: 1.6px solid var(--line); background: var(--paper-raised);
@@ -404,6 +454,16 @@ button { font: inherit; cursor: pointer; }
   background: rgba(255,255,255,0.22); font-weight: 600; font-size: 14px;
 }
 .new-channel:hover { border-color: var(--channel); color: var(--channel); background: rgba(255,255,255,0.32); }
+.new-channel-form {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  border: 1.5px dashed rgba(255,255,255,0.55); border-radius: 16px; min-height: 96px; padding: 14px;
+  background: rgba(255,255,255,0.22);
+}
+.new-channel-form input {
+  flex: 1; min-width: 120px; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 9px;
+  padding: 8px 12px; font: inherit; font-size: 14px; color: var(--ink);
+}
+.new-channel-form input:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
 
 /* ---------- rewards rail ---------- */
 .rail-card {
@@ -502,6 +562,49 @@ button { font: inherit; cursor: pointer; }
 .idea-link svg { width: 11px; height: 11px; }
 .ideas-empty { font-size: 13.5px; color: var(--ink-soft); font-style: italic; padding: 10px 4px; }
 
+/* ---------- on my mind ---------- */
+.feel-form textarea {
+  width: 100%; min-height: 72px; resize: vertical; background: var(--surface-recessed); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 14px; color: var(--ink); margin-bottom: 10px;
+}
+.feel-form textarea:focus { outline: 2px solid var(--feel); outline-offset: 1px; }
+.feel-card .btn-primary { background: var(--feel); }
+.feelings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; margin-bottom: 20px; }
+.feeling {
+  background: var(--paper-raised); border: 1px solid var(--line); border-left: 5px solid var(--feel);
+  border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px;
+}
+.feeling-text {
+  font-size: 14.5px; color: var(--ink); white-space: pre-wrap; word-break: break-word;
+  background: none; border: none; width: 100%; padding: 0; resize: vertical; font-family: inherit;
+}
+.feeling-text:focus { outline: 2px solid var(--feel); outline-offset: 1px; border-radius: 4px; }
+.feeling-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.feeling-letgo {
+  border: 1px solid var(--feel-tint); background: var(--feel-tint); color: var(--feel);
+  border-radius: 999px; padding: 5px 13px; font-size: 12.5px; font-weight: 600;
+}
+.feeling-letgo:hover { filter: brightness(0.97); }
+.feeling-del {
+  border: none; background: none; color: var(--ink-soft); width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.feeling-del:hover { color: var(--danger); background: var(--danger-tint); }
+.feeling-del svg { width: 13px; height: 13px; }
+.feelings-empty { font-size: 13.5px; color: var(--ink-soft); font-style: italic; padding: 10px 4px; }
+.letgo-log {
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px;
+}
+.letgo-log summary { font-size: 12.5px; font-weight: 600; color: var(--ink-soft); cursor: pointer; list-style: none; }
+.letgo-log summary::-webkit-details-marker { display: none; }
+.letgo-log summary:hover { color: var(--ink); }
+.letgo-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink-soft);
+  padding: 8px 0; border-top: 1px dashed var(--line);
+}
+.letgo-item span { word-break: break-word; }
+.letgo-restore { flex: none; border: none; background: none; color: var(--channel); font-size: 12px; font-weight: 600; padding: 2px 6px; }
+
 /* ---------- export modal ---------- */
 .modal-backdrop {
   position: fixed; inset: 0; background: rgba(20,15,35,0.5); display: flex;
@@ -518,10 +621,18 @@ button { font: inherit; cursor: pointer; }
   flex: 1; min-height: 260px; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 10px;
   padding: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink); resize: vertical;
 }
+.email-row { display: flex; gap: 8px; }
+.email-row input {
+  flex: 1; min-width: 0; background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 9px;
+  padding: 8px 12px; font: inherit; font-size: 14px; color: var(--ink);
+}
+.email-row input:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
 .modal-foot { display: flex; justify-content: flex-end; gap: 8px; }
 
 ::selection { background: var(--spark-tint); }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header class="topbar">
@@ -554,6 +665,7 @@ button { font: inherit; cursor: pointer; }
     <div class="tabs" role="tablist">
       <button class="tab-btn" id="tabDump" role="tab" aria-selected="true">Brain Dump</button>
       <button class="tab-btn" id="tabIdeas" role="tab" aria-selected="false">Ideas Vault</button>
+      <button class="tab-btn" id="tabFeelings" role="tab" aria-selected="false">On My Mind</button>
     </div>
     <div class="toolbar-right">
       <div class="scheme-picker" id="schemePicker" role="group" aria-label="Light or dark mode">
@@ -658,9 +770,13 @@ button { font: inherit; cursor: pointer; }
       </div>
     </section>
 
-    <div class="layout">
+    <div class="focus-toggle-row">
+      <div class="section-label" style="margin-bottom:0">Your channels</div>
+      <button class="btn btn-ghost btn-sm" id="focusToggleBtn">🎯 Focus Mode</button>
+    </div>
+    <section class="focus-card" id="focusCard" hidden></section>
+    <div class="layout" id="mainLayout">
       <div>
-        <div class="section-label">Your channels</div>
         <div class="channels" id="channelsGrid"></div>
       </div>
       <aside>
@@ -700,13 +816,35 @@ button { font: inherit; cursor: pointer; }
     <div class="idea-filters" id="ideaFilters"></div>
     <div class="ideas-grid" id="ideasGrid"></div>
   </section>
+
+  <section id="viewFeelings" hidden>
+    <section class="idea-card feel-card">
+      <h2>Things on your mind</h2>
+      <p class="sub">Worries, spirals, things you keep circling back to but don't know what to do with &mdash; park them here. No pressure to act on any of it; let each one go whenever you're ready, not before.</p>
+      <form class="feel-form" id="feelForm">
+        <textarea id="feelText" placeholder="What's on your mind&hellip;" maxlength="600" required></textarea>
+        <div class="idea-form-foot">
+          <button type="submit" class="btn btn-primary btn-sm">Park it</button>
+        </div>
+      </form>
+    </section>
+    <div class="feelings-grid" id="feelingsGrid"></div>
+    <details class="letgo-log" id="letgoWrap" style="display:none">
+      <summary>Let go (<span id="letgoCount">0</span>)</summary>
+      <div id="letgoList"></div>
+    </details>
+  </section>
 </div>
 
 <div class="modal-backdrop" id="exportModalBackdrop" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
     <h3 id="exportModalTitle">Your Brain Dump export</h3>
-    <p id="exportModalHint">Save this file, or select all and copy it &mdash; paste it into a chat with Claude any time you want help figuring out what to do next.</p>
+    <p id="exportModalHint">Save this file, or select all and copy it &mdash; keep it as a personal log, or paste it into any AI chat any time you want help figuring out what to focus on.</p>
     <textarea id="exportText" readonly></textarea>
+    <form class="email-row" id="emailForm">
+      <input type="email" id="emailAddr" placeholder="your@email.com" autocomplete="email">
+      <button type="submit" class="btn btn-ghost btn-sm">Email it to me</button>
+    </form>
     <div class="modal-foot">
       <button class="btn btn-ghost btn-sm" id="exportCopyBtn">Copy to clipboard</button>
       <button class="btn btn-primary btn-sm" id="exportCloseBtn">Close</button>
@@ -761,6 +899,9 @@ button { font: inherit; cursor: pointer; }
           id: uid(), title: "Try that overnight oats recipe", tag: "Inspo",
           link: "", note: "From a video someone sent me.", createdAt: Date.now()
         }
+      ],
+      feelings: [
+        { id: uid(), text: "Worried I said something wrong to Sam at lunch", resolved: false, createdAt: Date.now() }
       ]
     };
   }
@@ -772,6 +913,7 @@ button { font: inherit; cursor: pointer; }
       var parsed = JSON.parse(raw);
       if (!parsed || !Array.isArray(parsed.channels)) return demoState();
       if (!Array.isArray(parsed.ideas)) parsed.ideas = [];
+      if (!Array.isArray(parsed.feelings)) parsed.feelings = [];
       return parsed;
     } catch (e) { return demoState(); }
   }
@@ -781,8 +923,8 @@ button { font: inherit; cursor: pointer; }
   }
 
   var state = load();
-  var downloadsFn = null;
   var activeIdeaFilter = "";
+  var newChannelOpen = false;
 
   // ---------- rendering ----------
 
@@ -842,22 +984,40 @@ button { font: inherit; cursor: pointer; }
     };
   }
 
+  var URGENCY_LABELS = { "": "Urgency", now: "Now", soon: "Soon", someday: "Someday" };
+  var URGENCY_ORDER = ["", "now", "soon", "someday"];
+
   function taskRow(channel, task) {
     var checkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 9 17 20 6"/></svg>';
     var delSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 6h14M9 6V4h6v2M7 6l1 14h8l1-14"/></svg>';
+    var bulbSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .8 1.7v.5h5.6v-.5c0-.7.3-1.3.8-1.7A6 6 0 0 0 12 3Z"/></svg>';
+    var heartSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C.8 7.8 2 4 5.5 3.3 8 2.8 10.3 4.3 12 7c1.7-2.7 4-4.2 6.5-3.7C22 4 23.2 7.8 21.5 11 19 15.6 12 20 12 20Z"/></svg>';
     var others = state.channels.filter(function (c) { return c.id !== channel.id; });
     var moveOptions = '<option value="" selected disabled hidden>Move</option>' +
       others.map(function (c) { return '<option value="' + c.id + '">&rarr; ' + esc(c.name) + '</option>'; }).join("");
     var moveSelect = others.length
       ? '<select class="task-move" data-action="move-task" aria-label="Move task to another channel">' + moveOptions + '</select>'
       : "";
+    var sieve = "";
+    if (!task.done) {
+      var urgency = task.urgency || "";
+      sieve = '<div class="task-sieve">' +
+        '<button class="task-urgency" data-action="cycle-urgency" data-urgency="' + urgency + '" aria-label="Urgency: ' + URGENCY_LABELS[urgency] + ', click to change"><span class="dot"></span>' + URGENCY_LABELS[urgency] + '</button>' +
+        '<input type="date" class="task-date' + (task.dueDate ? ' has-date' : '') + '" data-action="set-date" value="' + esc(task.dueDate || "") + '" aria-label="Due date">' +
+        '<button class="task-idea" data-action="to-idea" title="Send to Ideas Vault" aria-label="Send to Ideas Vault">' + bulbSvg + '</button>' +
+        '<button class="task-feel" data-action="to-feeling" title="Park in On My Mind" aria-label="Park in On My Mind">' + heartSvg + '</button>' +
+      '</div>';
+    }
     return (
       '<div class="task' + (task.done ? " done" : "") + '" data-task="' + task.id + '">' +
-        '<button class="task-check" data-action="toggle" aria-label="Mark task complete">' + checkSvg + '</button>' +
-        '<span class="task-text">' + esc(task.text) + '</span>' +
-        '<span class="task-points">' + task.points + '</span>' +
-        moveSelect +
-        '<button class="task-del" data-action="delete-task" aria-label="Delete task">' + delSvg + '</button>' +
+        '<div class="task-main">' +
+          '<button class="task-check" data-action="toggle" aria-label="Mark task complete">' + checkSvg + '</button>' +
+          '<span class="task-text">' + esc(task.text) + '</span>' +
+          '<span class="task-points">' + task.points + '</span>' +
+          moveSelect +
+          '<button class="task-del" data-action="delete-task" aria-label="Delete task">' + delSvg + '</button>' +
+        '</div>' +
+        sieve +
       '</div>'
     );
   }
@@ -892,16 +1052,39 @@ button { font: inherit; cursor: pointer; }
       }
       html += '</div>';
     });
-    html += '<button class="new-channel" id="addChannelBtn">+ New channel</button>';
+    if (newChannelOpen) {
+      html += '<form class="new-channel-form" id="newChannelForm">' +
+        '<input type="text" id="newChannelInput" placeholder="Channel name&hellip;" maxlength="24" autocomplete="off">' +
+        '<button type="submit" class="btn btn-primary btn-sm">Add</button>' +
+        '<button type="button" class="btn-quiet" id="newChannelCancel">Cancel</button>' +
+      '</form>';
+    } else {
+      html += '<button class="new-channel" id="addChannelBtn">+ New channel</button>';
+    }
     channelsGrid.innerHTML = html;
-    document.getElementById("addChannelBtn").onclick = function () {
-      var name = prompt("Name this channel:");
-      if (!name) return;
-      state.channels.push({ id: uid(), name: name.trim().slice(0, 24) || "Untitled", tasks: [] });
-      state.isDemoData = false;
-      save();
-      renderAll();
-    };
+    if (newChannelOpen) {
+      var newChannelInput = document.getElementById("newChannelInput");
+      newChannelInput.focus();
+      document.getElementById("newChannelForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = newChannelInput.value.trim();
+        newChannelOpen = false;
+        if (!name) { renderAll(); return; }
+        state.channels.push({ id: uid(), name: name.slice(0, 24), tasks: [] });
+        state.isDemoData = false;
+        save();
+        renderAll();
+      });
+      document.getElementById("newChannelCancel").onclick = function () {
+        newChannelOpen = false;
+        renderChannels();
+      };
+    } else {
+      document.getElementById("addChannelBtn").onclick = function () {
+        newChannelOpen = true;
+        renderChannels();
+      };
+    }
   }
 
   function renderRewards() {
@@ -931,6 +1114,89 @@ button { font: inherit; cursor: pointer; }
       redeemLogWrap.style.display = "none";
     }
   }
+
+  // ---------- focus mode ----------
+
+  var focusToggleBtn = document.getElementById("focusToggleBtn");
+  var focusCard = document.getElementById("focusCard");
+  var mainLayout = document.getElementById("mainLayout");
+  var focusModeOn = false;
+  var focusTaskId = null;
+  var URGENCY_RANK = { now: 0, soon: 1, someday: 2, "": 3 };
+
+  function focusCandidates() {
+    var out = [];
+    state.channels.forEach(function (ch) {
+      ch.tasks.forEach(function (t) {
+        if (!t.done) out.push({ task: t, channel: ch });
+      });
+    });
+    out.sort(function (a, b) { return URGENCY_RANK[a.task.urgency || ""] - URGENCY_RANK[b.task.urgency || ""]; });
+    return out;
+  }
+
+  function renderFocusCard() {
+    if (!focusModeOn) return;
+    var list = focusCandidates();
+    if (!list.length) {
+      focusCard.innerHTML =
+        '<div class="focus-empty">' +
+          '<div class="focus-eyebrow">Focus Mode</div>' +
+          '<div class="focus-task-text">Nothing waiting on you right now &mdash; you\'re clear.</div>' +
+          '<div class="focus-actions"><button class="btn btn-ghost btn-sm" data-action="focus-exit">Back to channels</button></div>' +
+        '</div>';
+      return;
+    }
+    var current = list.find(function (x) { return x.task.id === focusTaskId; });
+    if (!current) { current = list[0]; focusTaskId = current.task.id; }
+    var urgencyLabel = current.task.urgency ? URGENCY_LABELS[current.task.urgency] : "Up next";
+    var dateBadge = current.task.dueDate ? '<span class="task-date has-date" style="pointer-events:none">' + esc(current.task.dueDate) + '</span>' : "";
+    focusCard.innerHTML =
+      '<div class="focus-eyebrow">' + esc(urgencyLabel) + ' &middot; ' + esc(current.channel.name) + '</div>' +
+      '<div class="focus-task-text">' + esc(current.task.text) + '</div>' +
+      '<div class="focus-meta"><span class="task-points">' + current.task.points + ' pts</span>' + dateBadge + '</div>' +
+      '<div class="focus-actions">' +
+        '<button class="btn btn-primary" data-action="focus-complete">Done &mdash; next</button>' +
+        (list.length > 1 ? '<button class="btn btn-ghost" data-action="focus-skip">Skip for now</button>' : "") +
+        '<button class="btn btn-ghost" data-action="focus-exit">Exit Focus Mode</button>' +
+      '</div>';
+  }
+
+  focusToggleBtn.addEventListener("click", function () {
+    focusModeOn = !focusModeOn;
+    focusTaskId = null;
+    mainLayout.hidden = focusModeOn;
+    focusCard.hidden = !focusModeOn;
+    focusToggleBtn.textContent = focusModeOn ? "See all channels" : "🎯 Focus Mode";
+    renderFocusCard();
+  });
+
+  focusCard.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    if (btn.dataset.action === "focus-exit") {
+      focusModeOn = false;
+      mainLayout.hidden = false;
+      focusCard.hidden = true;
+      focusToggleBtn.textContent = "🎯 Focus Mode";
+      return;
+    }
+    var list = focusCandidates();
+    var current = list.find(function (x) { return x.task.id === focusTaskId; });
+    if (!current) return;
+    if (btn.dataset.action === "focus-complete") {
+      current.task.done = true;
+      state.points += current.task.points;
+      popFloat(current.task.points);
+      focusTaskId = null;
+      save();
+      renderAll();
+    } else if (btn.dataset.action === "focus-skip") {
+      var next = list.find(function (x) { return x.task.id !== focusTaskId; });
+      focusTaskId = next ? next.task.id : focusTaskId;
+      renderFocusCard();
+    }
+  });
 
   // ---------- ideas vault ----------
 
@@ -1026,22 +1292,113 @@ button { font: inherit; cursor: pointer; }
     }
   });
 
+  // ---------- on my mind ----------
+
+  var feelingsGrid = document.getElementById("feelingsGrid");
+  var feelForm = document.getElementById("feelForm");
+  var letgoWrap = document.getElementById("letgoWrap");
+  var letgoList = document.getElementById("letgoList");
+  var letgoCount = document.getElementById("letgoCount");
+
+  function renderFeelings() {
+    var delSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 6h14M9 6V4h6v2M7 6l1 14h8l1-14"/></svg>';
+    var active = state.feelings.filter(function (f) { return !f.resolved; }).sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+    var resolved = state.feelings.filter(function (f) { return f.resolved; }).sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+
+    if (!active.length) {
+      feelingsGrid.innerHTML = "<div class=\"feelings-empty\">Nothing parked right now &mdash; whatever's circling your mind, there's room for it here.</div>";
+    } else {
+      feelingsGrid.innerHTML = active.map(function (f) {
+        return '<div class="feeling" data-feeling="' + f.id + '">' +
+          '<textarea class="feeling-text" data-action="edit-feeling" rows="3" maxlength="600">' + esc(f.text) + '</textarea>' +
+          '<div class="feeling-foot">' +
+            '<button class="feeling-letgo" data-action="letgo-feeling">Let it go</button>' +
+            '<button class="feeling-del" data-action="delete-feeling" aria-label="Delete">' + delSvg + '</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    if (resolved.length) {
+      letgoWrap.style.display = "";
+      letgoCount.textContent = resolved.length;
+      letgoList.innerHTML = resolved.slice(0, 15).map(function (f) {
+        return '<div class="letgo-item" data-feeling="' + f.id + '"><span>' + esc(f.text) + '</span><button class="letgo-restore" data-action="restore-feeling">Bring back</button></div>';
+      }).join("");
+    } else {
+      letgoWrap.style.display = "none";
+    }
+  }
+
+  feelForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var textEl = document.getElementById("feelText");
+    var text = textEl.value.trim();
+    if (!text) return;
+    state.feelings.unshift({ id: uid(), text: text.slice(0, 600), resolved: false, createdAt: Date.now() });
+    textEl.value = "";
+    save();
+    renderFeelings();
+    textEl.focus();
+  });
+
+  feelingsGrid.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    var fEl = btn.closest("[data-feeling]");
+    var feeling = state.feelings.find(function (f) { return f.id === fEl.dataset.feeling; });
+    if (!feeling) return;
+    if (btn.dataset.action === "letgo-feeling") {
+      feeling.resolved = true;
+      save();
+      renderFeelings();
+    } else if (btn.dataset.action === "delete-feeling") {
+      state.feelings = state.feelings.filter(function (f) { return f.id !== feeling.id; });
+      save();
+      renderFeelings();
+    }
+  });
+
+  feelingsGrid.addEventListener("change", function (e) {
+    if (e.target.dataset.action !== "edit-feeling") return;
+    var fEl = e.target.closest("[data-feeling]");
+    var feeling = state.feelings.find(function (f) { return f.id === fEl.dataset.feeling; });
+    if (!feeling) return;
+    feeling.text = e.target.value.trim().slice(0, 600);
+    save();
+  });
+
+  letgoList.addEventListener("click", function (e) {
+    var btn = e.target.closest('button[data-action="restore-feeling"]');
+    if (!btn) return;
+    var fEl = btn.closest("[data-feeling]");
+    var feeling = state.feelings.find(function (f) { return f.id === fEl.dataset.feeling; });
+    if (!feeling) return;
+    feeling.resolved = false;
+    save();
+    renderFeelings();
+  });
+
   // ---------- tabs ----------
 
   var tabDump = document.getElementById("tabDump");
   var tabIdeas = document.getElementById("tabIdeas");
+  var tabFeelings = document.getElementById("tabFeelings");
   var viewDump = document.getElementById("viewDump");
   var viewIdeas = document.getElementById("viewIdeas");
+  var viewFeelings = document.getElementById("viewFeelings");
 
   function showView(name) {
-    var onIdeas = name === "ideas";
-    viewDump.hidden = onIdeas;
-    viewIdeas.hidden = !onIdeas;
-    tabDump.setAttribute("aria-selected", String(!onIdeas));
-    tabIdeas.setAttribute("aria-selected", String(onIdeas));
+    viewDump.hidden = name !== "dump";
+    viewIdeas.hidden = name !== "ideas";
+    viewFeelings.hidden = name !== "feelings";
+    tabDump.setAttribute("aria-selected", String(name === "dump"));
+    tabIdeas.setAttribute("aria-selected", String(name === "ideas"));
+    tabFeelings.setAttribute("aria-selected", String(name === "feelings"));
   }
   tabDump.addEventListener("click", function () { showView("dump"); });
   tabIdeas.addEventListener("click", function () { showView("ideas"); renderIdeas(); });
+  tabFeelings.addEventListener("click", function () { showView("feelings"); renderFeelings(); });
 
   // ---------- theme picker ----------
 
@@ -1118,6 +1475,8 @@ button { font: inherit; cursor: pointer; }
     renderRewards();
     renderMascot();
     renderIdeas();
+    renderFeelings();
+    renderFocusCard();
   }
 
   // ---------- task/channel interactions ----------
@@ -1146,6 +1505,30 @@ button { font: inherit; cursor: pointer; }
       renderAll();
     } else if (btn.dataset.action === "delete-channel") {
       state.channels = state.channels.filter(function (c) { return c.id !== channel.id; });
+      save();
+      renderAll();
+    } else if (btn.dataset.action === "cycle-urgency") {
+      var taskElU = btn.closest("[data-task]");
+      var taskU = channel.tasks.find(function (t) { return t.id === taskElU.dataset.task; });
+      if (!taskU) return;
+      var idx = URGENCY_ORDER.indexOf(taskU.urgency || "");
+      taskU.urgency = URGENCY_ORDER[(idx + 1) % URGENCY_ORDER.length];
+      save();
+      renderAll();
+    } else if (btn.dataset.action === "to-idea") {
+      var taskElI = btn.closest("[data-task]");
+      var taskIdxI = channel.tasks.findIndex(function (t) { return t.id === taskElI.dataset.task; });
+      if (taskIdxI === -1) return;
+      var taskI = channel.tasks.splice(taskIdxI, 1)[0];
+      state.ideas.unshift({ id: uid(), title: taskI.text.slice(0, 80), tag: "", link: "", note: "", createdAt: Date.now() });
+      save();
+      renderAll();
+    } else if (btn.dataset.action === "to-feeling") {
+      var taskElF = btn.closest("[data-task]");
+      var taskIdxF = channel.tasks.findIndex(function (t) { return t.id === taskElF.dataset.task; });
+      if (taskIdxF === -1) return;
+      var taskF = channel.tasks.splice(taskIdxF, 1)[0];
+      state.feelings.unshift({ id: uid(), text: taskF.text, resolved: false, createdAt: Date.now() });
       save();
       renderAll();
     }
@@ -1187,6 +1570,15 @@ button { font: inherit; cursor: pointer; }
       if (taskIdx === -1) return;
       var task = fromChannel.tasks.splice(taskIdx, 1)[0];
       toChannel.tasks.unshift(task);
+      save();
+      renderAll();
+    } else if (e.target.dataset.action === "set-date") {
+      var chElD = e.target.closest("[data-channel]");
+      var channelD = state.channels.find(function (c) { return c.id === chElD.dataset.channel; });
+      var taskElD = e.target.closest("[data-task]");
+      var taskD = channelD && channelD.tasks.find(function (t) { return t.id === taskElD.dataset.task; });
+      if (!taskD) return;
+      taskD.dueDate = e.target.value || "";
       save();
       renderAll();
     }
@@ -1270,14 +1662,6 @@ button { font: inherit; cursor: pointer; }
 
   sortBtn.addEventListener("click", runSort);
 
-  async function initDownloads() {
-    try {
-      if (window.claude && typeof window.claude.use === "function") {
-        downloadsFn = await window.claude.use("downloads");
-      }
-    } catch (e) { downloadsFn = null; }
-  }
-
   // ---------- export ----------
 
   function formatDate(ts) {
@@ -1298,6 +1682,7 @@ button { font: inherit; cursor: pointer; }
     lines.push("- Open tasks: " + totalOpen + " across " + state.channels.length + " channel(s)");
     lines.push("- Completed tasks (all time, still on record): " + totalDone);
     lines.push("- Ideas saved: " + state.ideas.length);
+    lines.push("- On my mind (still parked): " + state.feelings.filter(function (f) { return !f.resolved; }).length);
     lines.push("");
     lines.push("## Channels");
     if (!state.channels.length) lines.push("_No channels yet._");
@@ -1306,10 +1691,20 @@ button { font: inherit; cursor: pointer; }
       var open = ch.tasks.filter(function (t) { return !t.done; });
       var done = ch.tasks.filter(function (t) { return t.done; });
       if (!open.length && !done.length) lines.push("_Empty._");
-      open.forEach(function (t) { lines.push("- [ ] " + t.text + " (" + t.points + " pts)"); });
+      open.forEach(function (t) {
+        var tags = [];
+        if (t.urgency) tags.push(URGENCY_LABELS[t.urgency]);
+        if (t.dueDate) tags.push("due " + t.dueDate);
+        lines.push("- [ ] " + t.text + " (" + t.points + " pts" + (tags.length ? ", " + tags.join(", ") : "") + ")");
+      });
       done.forEach(function (t) { lines.push("- [x] " + t.text + " (" + t.points + " pts)"); });
       lines.push("");
     });
+    lines.push("## On my mind");
+    var openFeelings = state.feelings.filter(function (f) { return !f.resolved; }).sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+    if (!openFeelings.length) lines.push("_Nothing parked right now._");
+    openFeelings.forEach(function (f) { lines.push("- " + f.text); });
+    lines.push("");
     lines.push("## Ideas vault");
     if (!state.ideas.length) lines.push("_No ideas saved yet._");
     state.ideas.slice().sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); }).forEach(function (idea) {
@@ -1340,16 +1735,30 @@ button { font: inherit; cursor: pointer; }
   var exportModalHint = document.getElementById("exportModalHint");
   var exportCopyBtn = document.getElementById("exportCopyBtn");
   var exportCloseBtn = document.getElementById("exportCloseBtn");
+  var emailForm = document.getElementById("emailForm");
+  var emailAddr = document.getElementById("emailAddr");
+  var EMAIL_KEY = "spillway_email_v1";
 
   function openExportModal(text, hint) {
     exportText.value = text;
     if (hint) exportModalHint.textContent = hint;
+    try { emailAddr.value = localStorage.getItem(EMAIL_KEY) || ""; } catch (e) { /* storage unavailable */ }
     exportModalBackdrop.hidden = false;
     exportText.focus();
     exportText.select();
   }
   exportCloseBtn.addEventListener("click", function () { exportModalBackdrop.hidden = true; });
   exportModalBackdrop.addEventListener("click", function (e) { if (e.target === exportModalBackdrop) exportModalBackdrop.hidden = true; });
+  emailForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var addr = emailAddr.value.trim();
+    if (!addr || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) { emailAddr.focus(); return; }
+    try { localStorage.setItem(EMAIL_KEY, addr); } catch (err) { /* storage unavailable */ }
+    var subject = "My Brain Dump list — " + new Date().toLocaleDateString();
+    var body = exportText.value;
+    if (body.length > 1800) body = body.slice(0, 1800) + "\n\n… (truncated — copy the full text from the app if you need the rest)";
+    window.location.href = "mailto:" + encodeURIComponent(addr) + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  });
   exportCopyBtn.addEventListener("click", async function () {
     try {
       await navigator.clipboard.writeText(exportText.value);
@@ -1360,23 +1769,13 @@ button { font: inherit; cursor: pointer; }
     }
   });
 
-  exportBtn.addEventListener("click", async function () {
+  exportBtn.addEventListener("click", function () {
     var text = buildExport();
-    var filename = "brain-dump-export-" + new Date().toISOString().slice(0, 10) + ".md";
-    if (!downloadsFn) {
-      openExportModal(text, "Downloading isn't available in this view, so here's the full export as text — select all and copy it, or save it as a .md file yourself.");
-      return;
-    }
-    try {
-      await downloadsFn.save({ filename: filename, data: text });
-    } catch (err) {
-      var code = err && err.code;
-      if (code === "declined" || code === "cancelled") return;
-      openExportModal(text, "Couldn't save the file directly, so here's the full export as text instead — select all and copy it.");
-    }
+    openExportModal(text, "Select all and copy it, or save it as a .md file yourself.");
   });
 
   renderAll();
-  initDownloads();
 })();
 </script>
+</body>
+</html>
