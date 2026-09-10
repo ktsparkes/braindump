@@ -284,7 +284,7 @@ h1, h2, h3 { font-family: 'Fraunces', ui-serif, Georgia, serif; text-wrap: balan
 .dump-head .sub { font-size: 13.5px; color: var(--ink-soft); }
 
 .mascot-wrap { flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-#brainMascot { width: 104px; height: 92px; overflow: visible; }
+#brainMascot { width: 112px; height: 109px; overflow: visible; }
 .mascot-caption {
   font-size: 11px; font-weight: 600; color: var(--on-paper-soft); white-space: nowrap;
   background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px;
@@ -629,6 +629,39 @@ button { font: inherit; cursor: pointer; }
 .email-row input:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
 .modal-foot { display: flex; justify-content: flex-end; gap: 8px; }
 
+/* ---------- app lock ---------- */
+.lock-screen {
+  position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center;
+  background: var(--paper); padding: 24px;
+}
+.lock-screen[hidden] { display: none; }
+.lock-card {
+  background: var(--paper-raised); border: 1px solid var(--line); border-radius: 20px;
+  padding: 32px 28px; max-width: 320px; width: 100%; text-align: center; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.lock-card svg { width: 34px; height: 34px; color: var(--channel); margin-bottom: 4px; }
+.lock-card h2 { font-size: 20px; font-weight: 600; }
+.lock-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+.lock-card form { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.lock-card input {
+  background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 14px; font: inherit; font-size: 15px; color: var(--ink); text-align: center; width: 100%;
+}
+.lock-card input:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
+.lock-error { font-size: 12.5px; color: var(--danger); min-height: 16px; visibility: hidden; }
+.lock-error.show { visibility: visible; }
+
+.lock-set-form { display: flex; flex-direction: column; gap: 8px; }
+.lock-set-form input {
+  background: var(--surface-recessed); border: 1px solid var(--line); border-radius: 9px;
+  padding: 8px 12px; font: inherit; font-size: 14px; color: var(--ink); width: 100%;
+}
+.lock-set-form input:focus { outline: 2px solid var(--channel); outline-offset: 1px; }
+.lock-set-error { font-size: 12px; color: var(--danger); min-height: 15px; visibility: hidden; }
+.lock-set-error.show { visibility: visible; }
+.lock-set-actions { display: flex; gap: 8px; }
+
 ::selection { background: var(--spark-tint); }
 </style>
 </head>
@@ -681,6 +714,7 @@ button { font: inherit; cursor: pointer; }
         <button class="swatch" data-theme-choice="beige" style="background:#E3B873" aria-label="Beige" aria-pressed="false"></button>
       </div>
       <button class="btn btn-ghost btn-sm" id="exportBtn">Export data</button>
+      <button class="btn btn-ghost btn-sm" id="lockSettingsBtn">&#128274; App lock</button>
     </div>
   </div>
 
@@ -690,7 +724,7 @@ button { font: inherit; cursor: pointer; }
     <section class="dump-card">
       <div class="dump-head">
         <div class="mascot-wrap">
-          <svg id="brainMascot" viewBox="0 0 160 130" aria-hidden="true">
+          <svg id="brainMascot" viewBox="-10 -5 180 175" aria-hidden="true">
             <g class="brain-sparkle" style="display:none">
               <path d="M15,14 L17,18 L21,20 L17,22 L15,26 L13,22 L9,20 L13,18 Z" fill="var(--brain-sparkle)"/>
               <path d="M142,20 L144,24 L148,26 L144,28 L142,32 L140,28 L136,26 L140,24 Z" fill="var(--brain-sparkle)"/>
@@ -707,8 +741,23 @@ button { font: inherit; cursor: pointer; }
               <path d="M126,10 C130,16 134,22 130,27 C126,31 120,27 121,21 C122,15 124,12 126,10 Z" fill="var(--brain-sweat-fill)" stroke="var(--brain-sweat-line)" stroke-width="1.5"/>
             </g>
 
-            <ellipse cx="14" cy="78" rx="10" ry="7" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3" transform="rotate(-24 14 78)"/>
-            <ellipse cx="146" cy="78" rx="10" ry="7" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3" transform="rotate(24 146 78)"/>
+            <g class="brain-limbs">
+              <path d="M65,112 L61,147" fill="none" stroke="var(--brain-line)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M65,112 L61,147" fill="none" stroke="var(--brain-fill)" stroke-width="13" stroke-linecap="round"/>
+              <ellipse cx="59" cy="151" rx="12" ry="7" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3" transform="rotate(-8 59 151)"/>
+              <path d="M95,112 L99,147" fill="none" stroke="var(--brain-line)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M95,112 L99,147" fill="none" stroke="var(--brain-fill)" stroke-width="13" stroke-linecap="round"/>
+              <ellipse cx="101" cy="151" rx="12" ry="7" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3" transform="rotate(8 101 151)"/>
+
+              <path d="M26,78 L4,106" fill="none" stroke="var(--brain-line)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M26,78 L4,106" fill="none" stroke="var(--brain-fill)" stroke-width="13" stroke-linecap="round"/>
+              <circle cx="4" cy="106" r="9" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3"/>
+              <ellipse cx="-1" cy="93" rx="4" ry="6.5" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="2.5" transform="rotate(-18 -1 93)"/>
+              <path d="M134,78 L156,106" fill="none" stroke="var(--brain-line)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M134,78 L156,106" fill="none" stroke="var(--brain-fill)" stroke-width="13" stroke-linecap="round"/>
+              <circle cx="156" cy="106" r="9" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3"/>
+              <ellipse cx="161" cy="93" rx="4" ry="6.5" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="2.5" transform="rotate(18 161 93)"/>
+            </g>
 
             <path class="brain-body" d="M80,6 C58,6 41,19 38,37 C16,42 5,64 18,82 C13,102 32,119 55,116 C61,126 99,126 105,116 C128,119 147,102 142,82 C155,64 144,42 122,37 C119,19 102,6 80,6 Z" fill="var(--brain-fill)" stroke="var(--brain-line)" stroke-width="3.5" stroke-linejoin="round"/>
             <path d="M80,20 C72,34 88,46 80,58 C72,70 88,84 81,96 C79,101 80,104 81,107" fill="none" stroke="var(--brain-line)" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>
@@ -722,32 +771,35 @@ button { font: inherit; cursor: pointer; }
               <ellipse cx="120" cy="72" rx="9" ry="5.5" fill="var(--brain-blush)" opacity="0.55"/>
             </g>
 
+            <g class="brain-eyes">
+              <ellipse cx="60" cy="60" rx="8.5" ry="10" fill="#fff"/>
+              <ellipse cx="100" cy="60" rx="8.5" ry="10" fill="#fff"/>
+              <circle cx="61" cy="62" r="5.5" fill="#1A1520"/>
+              <circle cx="101" cy="62" r="5.5" fill="#1A1520"/>
+              <circle cx="58.5" cy="58" r="2.6" fill="#fff"/>
+              <circle cx="98.5" cy="58" r="2.6" fill="#fff"/>
+              <circle cx="63" cy="65" r="1.1" fill="#fff" opacity="0.85"/>
+              <circle cx="103" cy="65" r="1.1" fill="#fff" opacity="0.85"/>
+            </g>
+
             <g class="face face-clear" style="display:none">
-              <path d="M50,58 Q60,48 70,58" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
-              <path d="M90,58 Q100,48 110,58" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
-              <path d="M54,78 Q80,106 106,78" fill="none" stroke="var(--ink)" stroke-width="4.4" stroke-linecap="round"/>
+              <path d="M49,49 Q60,44 70,49" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M111,49 Q100,44 90,49" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M52,76 Q80,110 108,76 Q80,96 52,76 Z" fill="var(--ink)"/>
             </g>
             <g class="face face-light">
-              <circle cx="60" cy="60" r="6.5" fill="var(--ink)"/>
-              <circle cx="100" cy="60" r="6.5" fill="var(--ink)"/>
-              <circle cx="57.7" cy="57.4" r="2" fill="#fff"/>
-              <circle cx="97.7" cy="57.4" r="2" fill="#fff"/>
+              <path d="M50,50 Q60,46 70,50" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M110,50 Q100,46 90,50" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
               <path d="M58,80 Q80,92 102,80" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
             </g>
             <g class="face face-busy" style="display:none">
-              <circle cx="60" cy="60" r="6.5" fill="var(--ink)"/>
-              <circle cx="100" cy="60" r="6.5" fill="var(--ink)"/>
-              <circle cx="57.7" cy="57.4" r="2" fill="#fff"/>
-              <circle cx="97.7" cy="57.4" r="2" fill="#fff"/>
+              <path d="M50,50 L70,51" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M110,50 L90,51" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
               <path d="M64,83 Q80,88 96,83" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
             </g>
             <g class="face face-full" style="display:none">
-              <path d="M48,52 L63,58" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-              <path d="M112,52 L97,58" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="60" cy="64" r="6" fill="var(--ink)"/>
-              <circle cx="100" cy="64" r="6" fill="var(--ink)"/>
-              <circle cx="57.7" cy="61.4" r="1.8" fill="#fff"/>
-              <circle cx="97.7" cy="61.4" r="1.8" fill="#fff"/>
+              <path d="M49,47 L70,53" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M111,47 L90,53" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
               <path d="M58,86 L67,80 L76,86 L85,80 L94,86 L103,80" fill="none" stroke="var(--ink)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
           </svg>
@@ -836,6 +888,30 @@ button { font: inherit; cursor: pointer; }
   </section>
 </div>
 
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    <h2>Locked</h2>
+    <p>Enter your passcode to open Brain Dump.</p>
+    <form id="lockForm">
+      <input type="password" id="lockInput" placeholder="Passcode" autocomplete="off">
+      <button type="submit" class="btn btn-primary">Unlock</button>
+    </form>
+    <div class="lock-error" id="lockError">Wrong passcode &mdash; try again.</div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="lockModalBackdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lockModalTitle">
+    <h3 id="lockModalTitle">App lock</h3>
+    <p>A quick passcode screen so someone glancing at your phone can't see your list at a click. Since this app has no server behind it, anyone who opens their browser's dev tools can still get past this &mdash; it stops a casual look, not a determined one.</p>
+    <div id="lockModalBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" id="lockModalClose">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="exportModalBackdrop" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
     <h3 id="exportModalTitle">Your Brain Dump export</h3>
@@ -859,6 +935,109 @@ button { font: inherit; cursor: pointer; }
   var STORAGE_KEY = "spillway_state_v1";
   var THEME_KEY = "spillway_theme_v1";
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- app lock (casual passcode screen — no real security, see modal copy) ----------
+
+  var PIN_KEY = "spillway_pin_v1";
+  var UNLOCK_KEY = "spillway_unlocked_v1";
+
+  function getPin() {
+    try { return localStorage.getItem(PIN_KEY) || ""; } catch (e) { return ""; }
+  }
+  function setPin(pin) {
+    try { localStorage.setItem(PIN_KEY, pin); } catch (e) { /* storage unavailable */ }
+  }
+  function clearPin() {
+    try { localStorage.removeItem(PIN_KEY); } catch (e) { /* storage unavailable */ }
+  }
+  function isUnlockedThisSession() {
+    try { return sessionStorage.getItem(UNLOCK_KEY) === "1"; } catch (e) { return false; }
+  }
+  function markUnlocked() {
+    try { sessionStorage.setItem(UNLOCK_KEY, "1"); } catch (e) { /* storage unavailable */ }
+  }
+
+  var lockScreen = document.getElementById("lockScreen");
+  var lockForm = document.getElementById("lockForm");
+  var lockInput = document.getElementById("lockInput");
+  var lockError = document.getElementById("lockError");
+
+  function checkLock() {
+    if (!getPin() || isUnlockedThisSession()) {
+      lockScreen.hidden = true;
+    } else {
+      lockScreen.hidden = false;
+      lockInput.focus();
+    }
+  }
+  lockForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (lockInput.value === getPin()) {
+      markUnlocked();
+      lockError.classList.remove("show");
+      lockInput.value = "";
+      lockScreen.hidden = true;
+    } else {
+      lockError.classList.add("show");
+      lockInput.value = "";
+      lockInput.focus();
+    }
+  });
+  checkLock();
+
+  var lockSettingsBtn = document.getElementById("lockSettingsBtn");
+  var lockModalBackdrop = document.getElementById("lockModalBackdrop");
+  var lockModalBody = document.getElementById("lockModalBody");
+  var lockModalClose = document.getElementById("lockModalClose");
+
+  function renderLockModalBody(forceSetForm) {
+    var pin = getPin();
+    if (!pin || forceSetForm) {
+      lockModalBody.innerHTML =
+        '<form class="lock-set-form" id="setPinForm">' +
+          '<input type="password" id="setPinInput" placeholder="Choose a passcode" autocomplete="off">' +
+          '<input type="password" id="setPinConfirm" placeholder="Confirm passcode" autocomplete="off">' +
+          '<div class="lock-set-error" id="setPinError">Passcodes don&rsquo;t match &mdash; try again.</div>' +
+          '<div class="lock-set-actions">' +
+            '<button type="submit" class="btn btn-primary btn-sm">' + (pin ? "Save new passcode" : "Set passcode") + '</button>' +
+            (pin ? '<button type="button" class="btn-quiet" id="cancelSetPin">Cancel</button>' : "") +
+          '</div>' +
+        '</form>';
+      document.getElementById("setPinForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var a = document.getElementById("setPinInput").value;
+        var b = document.getElementById("setPinConfirm").value;
+        if (!a || a !== b) {
+          document.getElementById("setPinError").classList.add("show");
+          return;
+        }
+        setPin(a);
+        markUnlocked();
+        lockModalBackdrop.hidden = true;
+      });
+      if (pin) {
+        document.getElementById("cancelSetPin").onclick = function () { renderLockModalBody(false); };
+      }
+    } else {
+      lockModalBody.innerHTML =
+        '<p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 10px">A passcode is set on this device.</p>' +
+        '<div class="lock-set-actions">' +
+          '<button class="btn btn-ghost btn-sm" id="changePinBtn">Change passcode</button>' +
+          '<button class="btn btn-ghost btn-sm" id="removePinBtn">Remove passcode</button>' +
+        '</div>';
+      document.getElementById("changePinBtn").onclick = function () { renderLockModalBody(true); };
+      document.getElementById("removePinBtn").onclick = function () {
+        clearPin();
+        lockModalBackdrop.hidden = true;
+      };
+    }
+  }
+  lockSettingsBtn.addEventListener("click", function () {
+    renderLockModalBody(false);
+    lockModalBackdrop.hidden = false;
+  });
+  lockModalClose.addEventListener("click", function () { lockModalBackdrop.hidden = true; });
+  lockModalBackdrop.addEventListener("click", function (e) { if (e.target === lockModalBackdrop) lockModalBackdrop.hidden = true; });
 
   function uid() {
     try { return crypto.randomUUID(); } catch (e) { return "id-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2); }
