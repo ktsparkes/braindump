@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Princess Castle Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&family=Nunito:wght@600;800&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#DDF3EC; --bg2:#C9EBDF; --ink:#2B2350; --muted:#5E5A7A;
+    --card:#FFFFFF; --accent:#FF5E8A; --accentD:#D63D69; --gold:#FFC23C; --line:#E4E0F2;
+  }
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    background-image:radial-gradient(circle at 12% 8%, #fff8 0 60px, transparent 61px),
+                     radial-gradient(circle at 88% 20%, #fff6 0 40px, transparent 41px);
+    color:var(--ink); font-family:"Nunito",system-ui,sans-serif; font-size:16px;
+    padding-inline:16px; padding-block:18px 32px;
+  }
+  .wrap{max-width:1040px; margin:0 auto; display:flex; flex-direction:column; gap:16px}
+  header{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px}
+  h1{font-family:"Sniglet","Nunito",system-ui,sans-serif; font-weight:800; font-size:clamp(28px,5vw,42px); margin:0; line-height:1.05; text-wrap:balance}
+  h1 span{color:var(--accent)}
+  .steps{display:flex; gap:8px; flex-wrap:wrap}
+  .step{
+    font:inherit; font-weight:800; font-size:15px; border:3px solid var(--ink); background:var(--card); color:var(--ink);
+    border-radius:999px; padding:8px 16px; cursor:pointer; display:flex; align-items:center; gap:8px;
+  }
+  .step b{display:inline-grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--bg2); font-size:13px}
+  .step[aria-current="step"]{background:var(--ink); color:#fff}
+  .step[aria-current="step"] b{background:var(--gold); color:var(--ink)}
+  .game{display:grid; grid-template-columns:1fr; gap:16px}
+  @media (min-width:780px){ .game{grid-template-columns:1.1fr 1fr} .game.final{grid-template-columns:1fr} }
+  .stage{
+    background:var(--card); border:3px solid var(--ink); border-radius:28px; box-shadow:6px 6px 0 var(--ink);
+    display:grid; place-items:center; padding:12px; position:relative; overflow:hidden;
+  }
+  .stage svg{width:100%; height:auto; max-height:58vh; display:block}
+  .panel{display:flex; flex-direction:column; gap:14px}
+  .panel h2{font-family:"Sniglet","Nunito",sans-serif; font-weight:400; font-size:26px; margin:0}
+  .group{background:#ffffffb3; border-radius:20px; padding:12px 14px; display:flex; flex-direction:column; gap:8px}
+  .group > span{font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted)}
+  .row{display:flex; flex-wrap:wrap; gap:8px}
+  .sw{
+    width:44px; height:44px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 2px var(--line);
+    cursor:pointer; padding:0; transition:transform .12s;
+  }
+  .sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink); transform:scale(1.1)}
+  .chip{
+    font:inherit; font-weight:800; font-size:15px; min-height:44px; padding:6px 16px; border-radius:14px;
+    border:2px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
+  }
+  .chip[aria-pressed="true"]{border-color:var(--ink); background:var(--gold)}
+  .sw:focus-visible,.chip:focus-visible,.step:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+  input[type=text]{
+    font:inherit; font-weight:800; font-size:18px; border:2px solid var(--line); border-radius:14px; padding:10px 14px;
+    color:var(--ink); background:#fff; width:100%; box-sizing:border-box;
+  }
+  .actions{display:flex; flex-wrap:wrap; gap:10px}
+  .btn{
+    font-family:"Sniglet","Nunito",sans-serif; font-size:20px; border:3px solid var(--ink); border-radius:18px;
+    padding:10px 20px; cursor:pointer; background:#fff; color:var(--ink); box-shadow:3px 3px 0 var(--ink);
+  }
+  .btn.go{background:var(--accent); color:#fff}
+  .btn:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink)}
+  .title-card{text-align:center; display:flex; flex-direction:column; gap:12px; align-items:center}
+  .title-card h2{font-family:"Sniglet","Nunito",sans-serif; font-weight:800; font-size:clamp(26px,5vw,40px); margin:0; text-wrap:balance}
+  .confetti{position:absolute; inset:0; pointer-events:none}
+  .confetti i{position:absolute; top:-12px; width:10px; height:14px; border-radius:3px; animation:fall 2.4s ease-in forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(540deg); opacity:.2}}
+  @media (prefers-reduced-motion:reduce){ .confetti{display:none} .sw{transition:none} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Princess <span>Castle</span> Maker</h1>
+    <nav class="steps" id="steps" aria-label="Game steps"></nav>
+  </header>
+  <main class="game" id="game">
+    <div class="stage" id="stage"></div>
+    <div class="panel" id="panel"></div>
+  </main>
+</div>
+
+<script>
+const INK = '#2B2350';
+const DEFAULTS = {
+  step:1, name:'Amara',
+  skin:'#8D5524', hairStyle:'puffs', hairColor:'#1B1212', dress:'#FF6F91', pattern:'sparkles', crown:'tiara',
+  walls:'#F9D5E2', roof:'#8E5BD9', roofStyle:'pointy', towers:3, flag:'#FFC23C', sky:'day', moat:true, flowers:true
+};
+let S = Object.assign({}, DEFAULTS);
+
+const PRINCESS = [
+  {key:'skin', label:'Skin', type:'sw', options:[['#C68642','Caramel brown'],['#8D5524','Brown'],['#6B3E1E','Cocoa brown'],['#4A2A12','Deep brown']]},
+  {key:'hairStyle', label:'Hair style', type:'chip', options:[['puffs','Puffs'],['afro','Afro'],['braids','Braids'],['long','Long'],['bun','Bun']]},
+  {key:'hairColor', label:'Hair colour', type:'sw', options:[['#1B1212','Black'],['#3B2314','Dark brown'],['#7A2E1A','Auburn'],['#E75B9C','Pink'],['#6A3FB5','Purple'],['#2BB3A3','Teal']]},
+  {key:'dress', label:'Dress', type:'sw', options:[['#FF6F91','Pink'],['#FFC23C','Sunshine'],['#2BB3A3','Teal'],['#8E5BD9','Purple'],['#4DA3FF','Sky blue'],['#E23D4B','Red']]},
+  {key:'pattern', label:'Dress pattern', type:'chip', options:[['plain','Plain'],['sparkles','Sparkles'],['hearts','Hearts'],['dots','Dots']]},
+  {key:'crown', label:'On her head', type:'chip', options:[['tiara','Tiara'],['crown','Crown'],['flowers','Flowers'],['none','Nothing']]}
+];
+const CASTLE = [
+  {key:'walls', label:'Walls', type:'sw', options:[['#F9D5E2','Pink'],['#D9D4E8','Stone'],['#FFF1C4','Cream'],['#CDE8FF','Ice blue'],['#E2D1FF','Lilac']]},
+  {key:'roof', label:'Roofs', type:'sw', options:[['#8E5BD9','Purple'],['#FF5E8A','Pink'],['#4DA3FF','Blue'],['#E23D4B','Red'],['#FFC23C','Gold']]},
+  {key:'roofStyle', label:'Roof shape', type:'chip', options:[['pointy','Pointy'],['flat','Battlements']]},
+  {key:'towers', label:'Towers', type:'chip', options:[[2,'2'],[3,'3'],[5,'5']]},
+  {key:'flag', label:'Flags', type:'sw', options:[['#FFC23C','Gold'],['#FF5E8A','Pink'],['#2BB3A3','Teal'],['#FFFFFF','White']]},
+  {key:'sky', label:'Sky', type:'chip', options:[['day','Sunny'],['sunset','Sunset'],['night','Night']]},
+  {key:'moat', label:'Moat', type:'chip', options:[[true,'Yes'],[false,'No']]},
+  {key:'flowers', label:'Flowers', type:'chip', options:[[true,'Yes'],[false,'No']]}
+];
+
+function shade(hex, amt){
+  const n = parseInt(hex.slice(1),16);
+  const c = v => Math.max(0, Math.min(255, v + amt));
+  return '#' + ((1<<24) | (c(n>>16)<<16) | (c(n>>8&255)<<8) | c(n&255)).toString(16).slice(1);
+}
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Princess drawing (200 x 300) ---------- */
+function princess(s){
+  const sk=s.skin, skD=shade(sk,-22), h=s.hairColor, d=s.dress, dD=shade(d,-45), dL=shade(d,45);
+  const cap = `<path d="M66 90 Q62 50 100 49 Q138 50 134 90 Q128 64 100 62 Q72 64 66 90Z" fill="${h}"/>`;
+  let back='', mid='', front=cap, by=54;
+  if (s.hairStyle==='long'){
+    back = `<path d="M64 90 Q60 42 100 42 Q140 42 136 90 L146 182 Q100 196 54 182 Z" fill="${h}"/>`;
+    front = `<path d="M66 90 Q64 48 100 48 Q136 48 134 90 Q126 64 108 66 Q98 74 86 66 Q72 70 66 90Z" fill="${h}"/>`;
+  } else if (s.hairStyle==='puffs'){
+    back = `<circle cx="58" cy="58" r="25" fill="${h}"/><circle cx="142" cy="58" r="25" fill="${h}"/>
+            <rect x="72" y="62" width="10" height="7" rx="3" fill="${d}"/><rect x="118" y="62" width="10" height="7" rx="3" fill="${d}"/>`;
+  } else if (s.hairStyle==='afro'){
+    back = `<circle cx="100" cy="80" r="56" fill="${h}"/>`;
+    for (let i=0;i<14;i++){ const a=i/14*Math.PI*2; back += `<circle cx="${100+Math.cos(a)*52}" cy="${80+Math.sin(a)*52}" r="9" fill="${h}"/>`; }
+    by = 30;
+  } else if (s.hairStyle==='braids'){
+    for (const x of [64,136]){
+      for (let i=0;i<7;i++) mid += `<ellipse cx="${x}" cy="${104+i*13}" rx="8" ry="8" fill="${h}" stroke="${shade(h,25)}" stroke-width="1.5"/>`;
+      mid += `<circle cx="${x}" cy="${200}" r="5" fill="${s.dress}"/><circle cx="${x}" cy="${209}" r="4" fill="#FFC23C"/>`;
+    }
+  } else if (s.hairStyle==='bun'){
+    back = `<circle cx="100" cy="40" r="21" fill="${h}"/>`;
+    by = 50;
+  }
+
+  const spots = [[70,245],[100,212],[130,248],[84,270],[118,270],[100,244],[60,275],[142,276],[90,196],[110,226],[76,222],[124,212],[100,278]];
+  let pat='';
+  for (const [x,y] of spots){
+    if (s.pattern==='sparkles') pat += `<path d="M${x} ${y-6}L${x+1.6} ${y-1.6}L${x+6} ${y}L${x+1.6} ${y+1.6}L${x} ${y+6}L${x-1.6} ${y+1.6}L${x-6} ${y}L${x-1.6} ${y-1.6}Z" fill="#fff" opacity=".9"/>`;
+    if (s.pattern==='hearts') pat += `<path d="M${x} ${y+4}C${x-7} ${y-2} ${x-3} ${y-7} ${x} ${y-3}C${x+3} ${y-7} ${x+7} ${y-2} ${x} ${y+4}Z" fill="#fff" opacity=".85"/>`;
+    if (s.pattern==='dots') pat += `<circle cx="${x}" cy="${y}" r="4" fill="${dL}"/>`;
+  }
+
+  let crown='';
+  if (s.crown==='tiara') crown = `<path d="M76 ${by} Q100 ${by-8} 124 ${by} L117 ${by-7} L108 ${by-11} L100 ${by-22} L92 ${by-11} L83 ${by-7} Z" fill="#FFD95A" stroke="#D99A00" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="${by-11}" r="3.5" fill="#FF5E8A"/>`;
+  if (s.crown==='crown') crown = `<path d="M76 ${by} L74 ${by-24} L88 ${by-12} L100 ${by-30} L112 ${by-12} L126 ${by-24} L124 ${by} Z" fill="#FFC23C" stroke="#D99A00" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="${by-9}" r="4" fill="#E23D4B"/><circle cx="85" cy="${by-7}" r="3" fill="#2BB3A3"/><circle cx="115" cy="${by-7}" r="3" fill="#2BB3A3"/>`;
+  if (s.crown==='flowers'){
+    const cols=['#FF6F91','#FFC23C','#FFFFFF','#8E5BD9','#4DA3FF'];
+    for (let i=0;i<6;i++){ const x=72+i*11.2, y=by-2-Math.sin(i/5*Math.PI)*6, c=cols[i%5];
+      crown += `<g><circle cx="${x-3}" cy="${y}" r="3.5" fill="${c}"/><circle cx="${x+3}" cy="${y}" r="3.5" fill="${c}"/><circle cx="${x}" cy="${y-3}" r="3.5" fill="${c}"/><circle cx="${x}" cy="${y+3}" r="3.5" fill="${c}"/><circle cx="${x}" cy="${y}" r="2.2" fill="#FFC23C"/></g>`; }
+  }
+
+  return `
+  ${back}
+  <ellipse cx="84" cy="293" rx="11" ry="6" fill="${dD}"/><ellipse cx="116" cy="293" rx="11" ry="6" fill="${dD}"/>
+  <rect x="92" y="112" width="16" height="24" rx="4" fill="${skD}"/>
+  <path d="M76 138 Q58 164 64 200" stroke="${sk}" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M124 138 Q142 164 136 200" stroke="${sk}" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <circle cx="64" cy="203" r="7.5" fill="${sk}"/><circle cx="136" cy="203" r="7.5" fill="${sk}"/>
+  <path d="M84 172 L116 172 Q150 222 170 284 Q100 298 30 284 Q50 222 84 172Z" fill="${d}"/>
+  <path d="M100 180 L100 290 M90 180 Q72 230 62 286 M110 180 Q128 230 138 286" stroke="${dD}" stroke-width="2" opacity=".35" fill="none"/>
+  ${pat}
+  <path d="M74 134 Q100 126 126 134 L116 176 L84 176 Z" fill="${d}"/>
+  <path d="M88 132 Q100 144 112 132" fill="${skD}"/>
+  <circle cx="75" cy="139" r="12" fill="${dL}"/><circle cx="125" cy="139" r="12" fill="${dL}"/>
+  <rect x="82" y="168" width="36" height="9" rx="4.5" fill="${dL}"/><circle cx="100" cy="172.5" r="4" fill="#FFC23C"/>
+  ${mid}
+  <circle cx="68" cy="92" r="6.5" fill="${sk}"/><circle cx="132" cy="92" r="6.5" fill="${sk}"/>
+  <circle cx="68" cy="101" r="3" fill="#FFC23C"/><circle cx="132" cy="101" r="3" fill="#FFC23C"/>
+  <circle cx="100" cy="88" r="33" fill="${sk}"/>
+  <ellipse cx="87" cy="91" rx="4.2" ry="5.2" fill="${INK}"/><ellipse cx="113" cy="91" rx="4.2" ry="5.2" fill="${INK}"/>
+  <circle cx="88.6" cy="89" r="1.6" fill="#fff"/><circle cx="114.6" cy="89" r="1.6" fill="#fff"/>
+  <path d="M82 85 L80 82 M86 84 L85.5 80.5 M118 85 L120 82 M114 84 L114.5 80.5" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>
+  <ellipse cx="78" cy="101" rx="6" ry="3.5" fill="#FF6F91" opacity=".45"/><ellipse cx="122" cy="101" rx="6" ry="3.5" fill="#FF6F91" opacity=".45"/>
+  <path d="M97 98 Q100 100.5 103 98" stroke="${skD}" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M91 105 Q100 114 109 105" stroke="#5A1F2A" stroke-width="3" fill="none" stroke-linecap="round"/>
+  ${front}
+  ${crown}`;
+}
+
+/* ---------- Castle drawing (400 x 300) ---------- */
+function castle(s, id){
+  const w=s.walls, wD=shade(w,-38), r=s.roof, night=s.sky==='night';
+  const glass = night ? '#FFE17A' : '#5B8FD9';
+  let sky='';
+  if (s.sky==='day') sky = `<rect width="400" height="300" fill="#BDE6FF"/><circle cx="345" cy="48" r="24" fill="#FFD447"/>
+    <g fill="#fff"><ellipse cx="70" cy="46" rx="30" ry="12"/><ellipse cx="90" cy="38" rx="20" ry="12"/><ellipse cx="250" cy="30" rx="24" ry="9"/></g>`;
+  if (s.sky==='sunset') sky = `<defs><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8FB1"/><stop offset="1" stop-color="#FFD08A"/></linearGradient></defs>
+    <rect width="400" height="300" fill="url(#${id}g)"/><circle cx="330" cy="200" r="34" fill="#FFB347"/>`;
+  if (night){ sky = `<rect width="400" height="300" fill="#262052"/><circle cx="340" cy="46" r="20" fill="#FFF3C4"/><circle cx="350" cy="40" r="18" fill="#262052"/>`;
+    const st=[[30,30],[80,60],[140,24],[200,44],[260,20],[300,70],[380,90],[20,110],[110,100],[360,130],[230,90]];
+    sky += st.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="#fff"/>`).join(''); }
+
+  const win = (cx,cy,ww=16,hh=22) => `<path d="M${cx-ww/2} ${cy+hh/2} L${cx-ww/2} ${cy-hh/2+ww/2} Q${cx} ${cy-hh/2-ww/4} ${cx+ww/2} ${cy-hh/2+ww/2} L${cx+ww/2} ${cy+hh/2}Z" fill="${glass}" stroke="${wD}" stroke-width="2"/>`;
+  const flag = (x,y) => `<line x1="${x}" y1="${y}" x2="${x}" y2="${y-22}" stroke="${INK}" stroke-width="2"/><path d="M${x} ${y-22} L${x+18} ${y-17} L${x} ${y-12}Z" fill="${s.flag}" stroke="${INK}" stroke-width="1"/>`;
+  const merlons = (x,y,wd) => { let o=''; const n=Math.max(2,Math.round(wd/16)); const step=wd/n;
+    for(let i=0;i<n;i++) if(i%2===0 || n<3) o+=`<rect x="${x+i*step}" y="${y-10}" width="${step}" height="11" fill="${w}" stroke="${wD}" stroke-width="2"/>`;
+    return o; };
+  const tower = (x,y,wd,ht,wins=1) => {
+    let o = `<rect x="${x}" y="${y}" width="${wd}" height="${ht}" fill="${w}" stroke="${wD}" stroke-width="2"/>`;
+    for(let i=0;i<wins;i++) o += win(x+wd/2, y+30+i*48);
+    if (s.roofStyle==='pointy'){ const top=y-wd*1.25;
+      o += `<path d="M${x-7} ${y} L${x+wd+7} ${y} L${x+wd/2} ${top}Z" fill="${r}" stroke="${shade(r,-40)}" stroke-width="2" stroke-linejoin="round"/>` + flag(x+wd/2, top);
+    } else o += merlons(x,y,wd) + flag(x+wd/2, y-10);
+    return o; };
+
+  let c='';
+  if (s.towers===5){ c += tower(26,150,42,105,1) + tower(332,150,42,105,1); }
+  c += tower(72,100,48,155,2) + tower(280,100,48,155,2);
+  if (s.towers>=3){ c += tower(180,84,40,58,0) +
+      `<path d="M200 112 C188 102 192 92 200 99 C208 92 212 102 200 112Z" fill="${night?'#FFE17A':'#FF5E8A'}"/>`; }
+  c += `<rect x="120" y="140" width="160" height="115" fill="${w}" stroke="${wD}" stroke-width="2"/>` + merlons(120,140,160);
+  c += win(148,175,20,28) + win(252,175,20,28);
+  c += `<path d="M178 255 L178 214 Q200 190 222 214 L222 255Z" fill="#7A4A2A" stroke="${INK}" stroke-width="2"/>
+        <path d="M189 205 L189 255 M200 200 L200 255 M211 205 L211 255" stroke="#5A3218" stroke-width="2"/><circle cx="214" cy="234" r="2.5" fill="#FFC23C"/>`;
+
+  let ground = `<path d="M0 248 Q100 234 200 250 Q300 262 400 244 L400 300 L0 300Z" fill="${night?'#3E7A55':'#7BCB6B'}"/>`;
+  let moat = s.moat ? `<path d="M0 266 Q200 254 400 266 L400 284 Q200 272 0 284Z" fill="${night?'#3B5FA8':'#4DA3FF'}"/>
+      <path d="M40 272 q8 -4 16 0 M140 266 q8 -4 16 0 M270 266 q8 -4 16 0 M350 272 q8 -4 16 0" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/>
+      <path d="M180 255 L220 255 L224 280 L176 280Z" fill="#A86B3C" stroke="${INK}" stroke-width="2"/>
+      <path d="M178 262 L222 262 M177 270 L223 270" stroke="#7A4A2A" stroke-width="2"/>` : '';
+  let flowers='';
+  if (s.flowers){ const fx=[[20,262],[52,290],[108,264],[150,292],[250,292],[300,262],[340,292],[382,264]], cols=['#FF5E8A','#FFC23C','#FFFFFF','#8E5BD9'];
+    fx.forEach(([x,y],i)=>{ const col=cols[i%4]; flowers += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y+9}" stroke="#2E7D3A" stroke-width="2"/>`+
+      [[-3,0],[3,0],[0,-3],[0,3]].map(([a,b])=>`<circle cx="${x+a}" cy="${y+b}" r="3" fill="${col}"/>`).join('') + `<circle cx="${x}" cy="${y}" r="1.8" fill="#FFC23C"/>`; }); }
+  return sky + ground + c + moat + flowers;
+}
+
+/* ---------- UI ---------- */
+const $ = id => document.getElementById(id);
+function controls(list){
+  return list.map(g => `<div class="group" role="group" aria-label="${g.label}"><span>${g.label}</span><div class="row">` +
+    g.options.map(([v,lab]) => { const on = S[g.key]===v;
+      return g.type==='sw'
+        ? `<button class="sw" style="background:${v}" aria-label="${lab}" title="${lab}" aria-pressed="${on}" data-k="${g.key}" data-v='${JSON.stringify(v)}'></button>`
+        : `<button class="chip" aria-pressed="${on}" data-k="${g.key}" data-v='${JSON.stringify(v)}'>${lab}</button>`; }).join('') +
+    `</div></div>`).join('');
+}
+function randomize(list){ list.forEach(g => { S[g.key] = g.options[Math.floor(Math.random()*g.options.length)][0]; }); }
+function title(){ return `Princess ${esc(S.name.trim() || 'Amara')}'s Castle`; }
+
+function render(){
+  $('steps').innerHTML = [['1','Princess'],['2','Castle'],['3','Ta-da!']].map(([n,l]) =>
+    `<button class="step" data-step="${n}" ${S.step==n?'aria-current="step"':''}><b>${n}</b>${l}</button>`).join('');
+  $('game').classList.toggle('final', S.step===3);
+  if (S.step===1){
+    $('stage').innerHTML = `<svg viewBox="0 0 200 305" role="img" aria-label="Your princess">${princess(S)}</svg>`;
+    $('panel').innerHTML = `<h2>Make your princess</h2>
+      <div class="group"><span>Her name</span><input type="text" id="pname" maxlength="18" value="${esc(S.name)}" aria-label="Princess name"></div>
+      ${controls(PRINCESS)}
+      <div class="actions"><button class="btn" data-act="rand1">Surprise me</button><button class="btn go" data-act="next">Now build her castle →</button></div>`;
+  } else if (S.step===2){
+    $('stage').innerHTML = `<svg viewBox="0 0 400 300" role="img" aria-label="Your castle">${castle(S,'c')}</svg>`;
+    $('panel').innerHTML = `<h2>Build the castle</h2>${controls(CASTLE)}
+      <div class="actions"><button class="btn" data-act="rand2">Surprise me</button><button class="btn go" data-act="next">Show me! →</button></div>`;
+  } else {
+    $('stage').innerHTML = `<svg viewBox="0 0 400 300" role="img" aria-label="${title()}">${castle(S,'f')}
+        <g transform="translate(282 148) scale(.5)">${princess(S)}</g></svg><div class="confetti" id="confetti"></div>`;
+    $('panel').innerHTML = `<div class="title-card"><h2>${title()}</h2>
+      <div class="actions"><button class="btn" data-act="p">Change princess</button><button class="btn" data-act="c">Change castle</button><button class="btn go" data-act="new">Make a new one</button></div></div>`;
+    confetti();
+  }
+  const inp = $('pname'); if (inp) inp.addEventListener('input', e => { S.name = e.target.value; });
+}
+function confetti(){
+  const box = $('confetti'); if (!box) return;
+  const cols=['#FF5E8A','#FFC23C','#2BB3A3','#8E5BD9','#4DA3FF'];
+  box.innerHTML = Array.from({length:40},(_,i)=>`<i style="left:${Math.random()*100}%;background:${cols[i%5]};animation-delay:${Math.random()*.8}s"></i>`).join('');
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.k){ S[b.dataset.k] = JSON.parse(b.dataset.v); render(); return; }
+  if (b.dataset.step){ S.step = +b.dataset.step; render(); return; }
+  const a = b.dataset.act;
+  if (a==='next') S.step++;
+  if (a==='rand1') randomize(PRINCESS);
+  if (a==='rand2') randomize(CASTLE);
+  if (a==='p') S.step=1;
+  if (a==='c') S.step=2;
+  if (a==='new') S = Object.assign({}, DEFAULTS);
+  render(); window.scrollTo({top:0, behavior:'smooth'});
+});
+
+function start(data){ if (data && data.S) S = Object.assign({}, DEFAULTS, data.S); render(); }
+window.claude?.hot?.snapshot?.(() => ({S}));
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
+</body>
+</html>
