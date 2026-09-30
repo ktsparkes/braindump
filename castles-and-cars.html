@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Castles and Cars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&family=Nunito:wght@600;800&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#DDF3EC; --bg2:#C9EBDF; --ink:#2B2350; --muted:#5E5A7A;
+    --card:#FFFFFF; --accent:#FF5E8A; --accentD:#D63D69; --gold:#FFC23C; --line:#E4E0F2;
+  }
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    background-image:radial-gradient(circle at 12% 8%, #fff8 0 60px, transparent 61px),
+                     radial-gradient(circle at 88% 20%, #fff6 0 40px, transparent 41px);
+    color:var(--ink); font-family:"Nunito",system-ui,sans-serif; font-size:16px;
+    padding-inline:16px; padding-block:18px 32px;
+  }
+  .wrap{max-width:1040px; margin:0 auto; display:flex; flex-direction:column; gap:16px}
+  header{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px}
+  h1{font-family:"Sniglet","Nunito",system-ui,sans-serif; font-weight:800; font-size:clamp(28px,5vw,42px); margin:0; line-height:1.05; text-wrap:balance}
+  h1 span{color:var(--accent)}
+  .steps{display:flex; gap:8px; flex-wrap:wrap}
+  .step{
+    font:inherit; font-weight:800; font-size:15px; border:3px solid var(--ink); background:var(--card); color:var(--ink);
+    border-radius:999px; padding:8px 16px; cursor:pointer; display:flex; align-items:center; gap:8px;
+  }
+  .step b{display:inline-grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--bg2); font-size:13px}
+  .step[aria-current="step"]{background:var(--ink); color:#fff}
+  .step[aria-current="step"] b{background:var(--gold); color:var(--ink)}
+  .game{display:grid; grid-template-columns:1fr; gap:16px}
+  @media (min-width:780px){ .game{grid-template-columns:1.1fr 1fr} .game.final{grid-template-columns:1fr} }
+  .stage{
+    background:var(--card); border:3px solid var(--ink); border-radius:28px; box-shadow:6px 6px 0 var(--ink);
+    display:grid; place-items:center; padding:12px; position:relative; overflow:hidden;
+  }
+  .stage svg{width:100%; height:auto; max-height:58vh; display:block}
+  .panel{display:flex; flex-direction:column; gap:14px}
+  .panel h2{font-family:"Sniglet","Nunito",sans-serif; font-weight:400; font-size:26px; margin:0}
+  .group{background:#ffffffb3; border-radius:20px; padding:12px 14px; display:flex; flex-direction:column; gap:8px}
+  .group > span{font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted)}
+  .row{display:flex; flex-wrap:wrap; gap:8px}
+  .sw{
+    width:44px; height:44px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 2px var(--line);
+    cursor:pointer; padding:0; transition:transform .12s;
+  }
+  .sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink); transform:scale(1.1)}
+  .chip{
+    font:inherit; font-weight:800; font-size:15px; min-height:44px; padding:6px 16px; border-radius:14px;
+    border:2px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
+  }
+  .chip[aria-pressed="true"]{border-color:var(--ink); background:var(--gold)}
+  .sw:focus-visible,.chip:focus-visible,.step:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+  input[type=text]{
+    font:inherit; font-weight:800; font-size:18px; border:2px solid var(--line); border-radius:14px; padding:10px 14px;
+    color:var(--ink); background:#fff; width:100%; box-sizing:border-box;
+  }
+  .actions{display:flex; flex-wrap:wrap; gap:10px}
+  .btn{
+    font-family:"Sniglet","Nunito",sans-serif; font-size:20px; border:3px solid var(--ink); border-radius:18px;
+    padding:10px 20px; cursor:pointer; background:#fff; color:var(--ink); box-shadow:3px 3px 0 var(--ink);
+  }
+  .btn.go{background:var(--accent); color:#fff}
+  .btn:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink)}
+  .title-card{text-align:center; display:flex; flex-direction:column; gap:12px; align-items:center}
+  .title-card h2{font-family:"Sniglet","Nunito",sans-serif; font-weight:800; font-size:clamp(26px,5vw,40px); margin:0; text-wrap:balance}
+  .confetti{position:absolute; inset:0; pointer-events:none}
+  .confetti i{position:absolute; top:-12px; width:10px; height:14px; border-radius:3px; animation:fall 2.4s ease-in forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(540deg); opacity:.2}}
+  @media (min-width:780px){ .game:not(.final) .stage{position:sticky; top:calc(env(safe-area-inset-top, 0px) + 16px); align-self:start} }
+  body.boy{--accent:#2F8FE0; --accentD:#1C6FB8}
+  .choose{display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%}
+  .choose p{grid-column:1/-1; text-align:center; font-family:"Sniglet","Nunito",sans-serif; font-size:clamp(22px,4vw,30px); margin:4px 0 0}
+  .pick{
+    font:inherit; border:3px solid var(--ink); border-radius:24px; background:#FFE3EC; cursor:pointer; padding:12px 8px 14px;
+    display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:4px 4px 0 var(--ink); color:var(--ink);
+  }
+  .pick.b{background:#D8ECFF}
+  .pick svg{width:100%; max-width:220px; height:auto}
+  .pick strong{font-family:"Sniglet","Nunito",sans-serif; font-weight:800; font-size:clamp(24px,5vw,34px)}
+  .pick small{font-size:15px; font-weight:800; color:var(--muted)}
+  .pick:active{transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink)}
+  .pick:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+  @media (prefers-reduced-motion:reduce){ .confetti{display:none} .sw{transition:none} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1 id="h1">Castles <span>&amp;</span> Cars</h1>
+    <nav class="steps" id="steps" aria-label="Game steps"></nav>
+  </header>
+  <main class="game" id="game">
+    <div class="stage" id="stage"></div>
+    <div class="panel" id="panel"></div>
+  </main>
+</div>
+
+<script>
+const INK = '#2B2350';
+const DEFAULTS = {
+  step:0, mode:null, name:'Amara',
+  skin:'#8D5524', hairStyle:'puffs', hairColor:'#1B1212', dress:'#FF6F91', pattern:'sparkles', crown:'tiara',
+  walls:'#F9D5E2', roof:'#8E5BD9', roofStyle:'pointy', towers:3, flag:'#FFC23C', sky:'day', moat:true, flowers:true,
+  bname:'Kofi', bskin:'#8D5524', bhair:'curly', bhairColor:'#1B1212', shirt:'#2F8FE0', design:'lightning', bottoms:'trousers', pants:'#2B2350', hat:'cap',
+  vtype:'race', vcolor:'#E23D4B', wheels:'classic', sticker:'number', vnum:7, scene:'track'
+};
+let S = Object.assign({}, DEFAULTS);
+
+const BOY = [
+  {key:'bskin', label:'Skin', type:'sw', options:[['#F1C9A5','Light'],['#E0AC69','Golden'],['#C68642','Caramel brown'],['#8D5524','Brown'],['#6B3E1E','Cocoa brown'],['#4A2A12','Deep brown']]},
+  {key:'bhair', label:'Hair style', type:'chip', options:[['curly','Curly top'],['afro','Afro'],['twists','Twists'],['short','Short'],['buzz','Buzz cut']]},
+  {key:'bhairColor', label:'Hair colour', type:'sw', options:[['#1B1212','Black'],['#3B2314','Dark brown'],['#7A2E1A','Auburn'],['#D9A441','Blond'],['#2F8FE0','Blue'],['#16A34A','Green']]},
+  {key:'shirt', label:'T-shirt', type:'sw', options:[['#2F8FE0','Blue'],['#E23D4B','Red'],['#16A34A','Green'],['#FFC23C','Yellow'],['#F0791A','Orange'],['#8E5BD9','Purple']]},
+  {key:'design', label:'T-shirt picture', type:'chip', options:[['lightning','Lightning'],['star','Star'],['stripes','Stripes'],['number','Number'],['plain','Plain']]},
+  {key:'bottoms', label:'Legs', type:'chip', options:[['trousers','Trousers'],['shorts','Shorts']]},
+  {key:'pants', label:'Trousers colour', type:'sw', options:[['#2B2350','Navy'],['#4A6FA5','Denim'],['#3E3A3A','Black'],['#7A8B3C','Khaki']]},
+  {key:'hat', label:'On his head', type:'chip', options:[['cap','Cap'],['crown','Crown'],['headphones','Headphones'],['none','Nothing']]}
+];
+const VEHICLE = [
+  {key:'vtype', label:'Vehicle', type:'chip', options:[['race','Race car'],['truck','Monster truck'],['rocket','Rocket']]},
+  {key:'vcolor', label:'Colour', type:'sw', options:[['#E23D4B','Red'],['#2F8FE0','Blue'],['#16A34A','Green'],['#FFC23C','Yellow'],['#F0791A','Orange'],['#8E5BD9','Purple'],['#3E3A3A','Black']]},
+  {key:'sticker', label:'Sticker', type:'chip', options:[['number','Number'],['flames','Flames'],['stars','Stars'],['lightning','Lightning'],['none','None']]},
+  {key:'vnum', label:'Your number', type:'chip', options:[[1,'1'],[7,'7'],[10,'10'],[23,'23'],[99,'99']]},
+  {key:'wheels', label:'Wheels', type:'chip', options:[['classic','Classic'],['gold','Gold'],['neon','Neon']]},
+  {key:'scene', label:'Where', type:'chip', options:[['track','Race track'],['city','City at night'],['space','Space']]}
+];
+const VNAME = {race:'Race Car', truck:'Monster Truck', rocket:'Rocket'};
+
+const PRINCESS = [
+  {key:'skin', label:'Skin', type:'sw', options:[['#C68642','Caramel brown'],['#8D5524','Brown'],['#6B3E1E','Cocoa brown'],['#4A2A12','Deep brown']]},
+  {key:'hairStyle', label:'Hair style', type:'chip', options:[['puffs','Puffs'],['afro','Afro'],['braids','Braids'],['long','Long'],['bun','Bun']]},
+  {key:'hairColor', label:'Hair colour', type:'sw', options:[['#1B1212','Black'],['#3B2314','Dark brown'],['#7A2E1A','Auburn'],['#E75B9C','Pink'],['#6A3FB5','Purple'],['#2BB3A3','Teal']]},
+  {key:'dress', label:'Dress', type:'sw', options:[['#FF6F91','Pink'],['#FFC23C','Sunshine'],['#2BB3A3','Teal'],['#8E5BD9','Purple'],['#4DA3FF','Sky blue'],['#E23D4B','Red']]},
+  {key:'pattern', label:'Dress pattern', type:'chip', options:[['plain','Plain'],['sparkles','Sparkles'],['hearts','Hearts'],['dots','Dots']]},
+  {key:'crown', label:'On her head', type:'chip', options:[['tiara','Tiara'],['crown','Crown'],['flowers','Flowers'],['none','Nothing']]}
+];
+const CASTLE = [
+  {key:'walls', label:'Walls', type:'sw', options:[['#F9D5E2','Pink'],['#D9D4E8','Stone'],['#FFF1C4','Cream'],['#CDE8FF','Ice blue'],['#E2D1FF','Lilac']]},
+  {key:'roof', label:'Roofs', type:'sw', options:[['#8E5BD9','Purple'],['#FF5E8A','Pink'],['#4DA3FF','Blue'],['#E23D4B','Red'],['#FFC23C','Gold']]},
+  {key:'roofStyle', label:'Roof shape', type:'chip', options:[['pointy','Pointy'],['flat','Battlements']]},
+  {key:'towers', label:'Towers', type:'chip', options:[[2,'2'],[3,'3'],[5,'5']]},
+  {key:'flag', label:'Flags', type:'sw', options:[['#FFC23C','Gold'],['#FF5E8A','Pink'],['#2BB3A3','Teal'],['#FFFFFF','White']]},
+  {key:'sky', label:'Sky', type:'chip', options:[['day','Sunny'],['sunset','Sunset'],['night','Night']]},
+  {key:'moat', label:'Moat', type:'chip', options:[[true,'Yes'],[false,'No']]},
+  {key:'flowers', label:'Flowers', type:'chip', options:[[true,'Yes'],[false,'No']]}
+];
+
+function shade(hex, amt){
+  const n = parseInt(hex.slice(1),16);
+  const c = v => Math.max(0, Math.min(255, v + amt));
+  return '#' + ((1<<24) | (c(n>>16)<<16) | (c(n>>8&255)<<8) | c(n&255)).toString(16).slice(1);
+}
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Princess drawing (200 x 300) ---------- */
+function princess(s){
+  const sk=s.skin, skD=shade(sk,-22), h=s.hairColor, d=s.dress, dD=shade(d,-45), dL=shade(d,45);
+  const cap = `<path d="M66 90 Q62 50 100 49 Q138 50 134 90 Q128 64 100 62 Q72 64 66 90Z" fill="${h}"/>`;
+  let back='', mid='', front=cap, by=54;
+  if (s.hairStyle==='long'){
+    back = `<path d="M64 90 Q60 42 100 42 Q140 42 136 90 L146 182 Q100 196 54 182 Z" fill="${h}"/>`;
+    front = `<path d="M66 90 Q64 48 100 48 Q136 48 134 90 Q126 64 108 66 Q98 74 86 66 Q72 70 66 90Z" fill="${h}"/>`;
+  } else if (s.hairStyle==='puffs'){
+    back = `<circle cx="58" cy="58" r="25" fill="${h}"/><circle cx="142" cy="58" r="25" fill="${h}"/>
+            <rect x="72" y="62" width="10" height="7" rx="3" fill="${d}"/><rect x="118" y="62" width="10" height="7" rx="3" fill="${d}"/>`;
+  } else if (s.hairStyle==='afro'){
+    back = `<circle cx="100" cy="80" r="56" fill="${h}"/>`;
+    for (let i=0;i<14;i++){ const a=i/14*Math.PI*2; back += `<circle cx="${100+Math.cos(a)*52}" cy="${80+Math.sin(a)*52}" r="9" fill="${h}"/>`; }
+    by = 30;
+  } else if (s.hairStyle==='braids'){
+    for (const x of [64,136]){
+      for (let i=0;i<7;i++) mid += `<ellipse cx="${x}" cy="${104+i*13}" rx="8" ry="8" fill="${h}" stroke="${shade(h,25)}" stroke-width="1.5"/>`;
+      mid += `<circle cx="${x}" cy="${200}" r="5" fill="${s.dress}"/><circle cx="${x}" cy="${209}" r="4" fill="#FFC23C"/>`;
+    }
+  } else if (s.hairStyle==='bun'){
+    back = `<circle cx="100" cy="40" r="21" fill="${h}"/>`;
+    by = 50;
+  }
+
+  const spots = [[70,245],[100,212],[130,248],[84,270],[118,270],[100,244],[60,275],[142,276],[90,196],[110,226],[76,222],[124,212],[100,278]];
+  let pat='';
+  for (const [x,y] of spots){
+    if (s.pattern==='sparkles') pat += `<path d="M${x} ${y-6}L${x+1.6} ${y-1.6}L${x+6} ${y}L${x+1.6} ${y+1.6}L${x} ${y+6}L${x-1.6} ${y+1.6}L${x-6} ${y}L${x-1.6} ${y-1.6}Z" fill="#fff" opacity=".9"/>`;
+    if (s.pattern==='hearts') pat += `<path d="M${x} ${y+4}C${x-7} ${y-2} ${x-3} ${y-7} ${x} ${y-3}C${x+3} ${y-7} ${x+7} ${y-2} ${x} ${y+4}Z" fill="#fff" opacity=".85"/>`;
+    if (s.pattern==='dots') pat += `<circle cx="${x}" cy="${y}" r="4" fill="${dL}"/>`;
+  }
+
+  let crown='';
+  if (s.crown==='tiara') crown = `<path d="M76 ${by} Q100 ${by-8} 124 ${by} L117 ${by-7} L108 ${by-11} L100 ${by-22} L92 ${by-11} L83 ${by-7} Z" fill="#FFD95A" stroke="#D99A00" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="${by-11}" r="3.5" fill="#FF5E8A"/>`;
+  if (s.crown==='crown') crown = `<path d="M76 ${by} L74 ${by-24} L88 ${by-12} L100 ${by-30} L112 ${by-12} L126 ${by-24} L124 ${by} Z" fill="#FFC23C" stroke="#D99A00" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="${by-9}" r="4" fill="#E23D4B"/><circle cx="85" cy="${by-7}" r="3" fill="#2BB3A3"/><circle cx="115" cy="${by-7}" r="3" fill="#2BB3A3"/>`;
+  if (s.crown==='flowers'){
+    const cols=['#FF6F91','#FFC23C','#FFFFFF','#8E5BD9','#4DA3FF'];
+    for (let i=0;i<6;i++){ const x=72+i*11.2, y=by-2-Math.sin(i/5*Math.PI)*6, c=cols[i%5];
+      crown += `<g><circle cx="${x-3}" cy="${y}" r="3.5" fill="${c}"/><circle cx="${x+3}" cy="${y}" r="3.5" fill="${c}"/><circle cx="${x}" cy="${y-3}" r="3.5" fill="${c}"/><circle cx="${x}" cy="${y+3}" r="3.5" fill="${c}"/><circle cx="${x}" cy="${y}" r="2.2" fill="#FFC23C"/></g>`; }
+  }
+
+  return `
+  ${back}
+  <ellipse cx="84" cy="293" rx="11" ry="6" fill="${dD}"/><ellipse cx="116" cy="293" rx="11" ry="6" fill="${dD}"/>
+  <rect x="92" y="112" width="16" height="24" rx="4" fill="${skD}"/>
+  <path d="M76 138 Q58 164 64 200" stroke="${sk}" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M124 138 Q142 164 136 200" stroke="${sk}" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <circle cx="64" cy="203" r="7.5" fill="${sk}"/><circle cx="136" cy="203" r="7.5" fill="${sk}"/>
+  <path d="M84 172 L116 172 Q150 222 170 284 Q100 298 30 284 Q50 222 84 172Z" fill="${d}"/>
+  <path d="M100 180 L100 290 M90 180 Q72 230 62 286 M110 180 Q128 230 138 286" stroke="${dD}" stroke-width="2" opacity=".35" fill="none"/>
+  ${pat}
+  <path d="M74 134 Q100 126 126 134 L116 176 L84 176 Z" fill="${d}"/>
+  <path d="M88 132 Q100 144 112 132" fill="${skD}"/>
+  <circle cx="75" cy="139" r="12" fill="${dL}"/><circle cx="125" cy="139" r="12" fill="${dL}"/>
+  <rect x="82" y="168" width="36" height="9" rx="4.5" fill="${dL}"/><circle cx="100" cy="172.5" r="4" fill="#FFC23C"/>
+  ${mid}
+  <circle cx="68" cy="92" r="6.5" fill="${sk}"/><circle cx="132" cy="92" r="6.5" fill="${sk}"/>
+  <circle cx="68" cy="101" r="3" fill="#FFC23C"/><circle cx="132" cy="101" r="3" fill="#FFC23C"/>
+  <circle cx="100" cy="88" r="33" fill="${sk}"/>
+  <ellipse cx="87" cy="91" rx="4.2" ry="5.2" fill="${INK}"/><ellipse cx="113" cy="91" rx="4.2" ry="5.2" fill="${INK}"/>
+  <circle cx="88.6" cy="89" r="1.6" fill="#fff"/><circle cx="114.6" cy="89" r="1.6" fill="#fff"/>
+  <path d="M82 85 L80 82 M86 84 L85.5 80.5 M118 85 L120 82 M114 84 L114.5 80.5" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>
+  <ellipse cx="78" cy="101" rx="6" ry="3.5" fill="#FF6F91" opacity=".45"/><ellipse cx="122" cy="101" rx="6" ry="3.5" fill="#FF6F91" opacity=".45"/>
+  <path d="M97 98 Q100 100.5 103 98" stroke="${skD}" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M91 105 Q100 114 109 105" stroke="#5A1F2A" stroke-width="3" fill="none" stroke-linecap="round"/>
+  ${front}
+  ${crown}`;
+}
+
+/* ---------- Castle drawing (400 x 300) ---------- */
+function castle(s, id){
+  const w=s.walls, wD=shade(w,-38), r=s.roof, night=s.sky==='night';
+  const glass = night ? '#FFE17A' : '#5B8FD9';
+  let sky='';
+  if (s.sky==='day') sky = `<rect width="400" height="300" fill="#BDE6FF"/><circle cx="345" cy="48" r="24" fill="#FFD447"/>
+    <g fill="#fff"><ellipse cx="70" cy="46" rx="30" ry="12"/><ellipse cx="90" cy="38" rx="20" ry="12"/><ellipse cx="250" cy="30" rx="24" ry="9"/></g>`;
+  if (s.sky==='sunset') sky = `<defs><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8FB1"/><stop offset="1" stop-color="#FFD08A"/></linearGradient></defs>
+    <rect width="400" height="300" fill="url(#${id}g)"/><circle cx="330" cy="200" r="34" fill="#FFB347"/>`;
+  if (night){ sky = `<rect width="400" height="300" fill="#262052"/><circle cx="340" cy="46" r="20" fill="#FFF3C4"/><circle cx="350" cy="40" r="18" fill="#262052"/>`;
+    const st=[[30,30],[80,60],[140,24],[200,44],[260,20],[300,70],[380,90],[20,110],[110,100],[360,130],[230,90]];
+    sky += st.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="#fff"/>`).join(''); }
+
+  const win = (cx,cy,ww=16,hh=22) => `<path d="M${cx-ww/2} ${cy+hh/2} L${cx-ww/2} ${cy-hh/2+ww/2} Q${cx} ${cy-hh/2-ww/4} ${cx+ww/2} ${cy-hh/2+ww/2} L${cx+ww/2} ${cy+hh/2}Z" fill="${glass}" stroke="${wD}" stroke-width="2"/>`;
+  const flag = (x,y) => `<line x1="${x}" y1="${y}" x2="${x}" y2="${y-22}" stroke="${INK}" stroke-width="2"/><path d="M${x} ${y-22} L${x+18} ${y-17} L${x} ${y-12}Z" fill="${s.flag}" stroke="${INK}" stroke-width="1"/>`;
+  const merlons = (x,y,wd) => { let o=''; const n=Math.max(2,Math.round(wd/16)); const step=wd/n;
+    for(let i=0;i<n;i++) if(i%2===0 || n<3) o+=`<rect x="${x+i*step}" y="${y-10}" width="${step}" height="11" fill="${w}" stroke="${wD}" stroke-width="2"/>`;
+    return o; };
+  const tower = (x,y,wd,ht,wins=1) => {
+    let o = `<rect x="${x}" y="${y}" width="${wd}" height="${ht}" fill="${w}" stroke="${wD}" stroke-width="2"/>`;
+    for(let i=0;i<wins;i++) o += win(x+wd/2, y+30+i*48);
+    if (s.roofStyle==='pointy'){ const top=y-wd*1.25;
+      o += `<path d="M${x-7} ${y} L${x+wd+7} ${y} L${x+wd/2} ${top}Z" fill="${r}" stroke="${shade(r,-40)}" stroke-width="2" stroke-linejoin="round"/>` + flag(x+wd/2, top);
+    } else o += merlons(x,y,wd) + flag(x+wd/2, y-10);
+    return o; };
+
+  let c='';
+  if (s.towers===5){ c += tower(26,150,42,105,1) + tower(332,150,42,105,1); }
+  c += tower(72,100,48,155,2) + tower(280,100,48,155,2);
+  if (s.towers>=3){ c += tower(180,84,40,58,0) +
+      `<path d="M200 112 C188 102 192 92 200 99 C208 92 212 102 200 112Z" fill="${night?'#FFE17A':'#FF5E8A'}"/>`; }
+  c += `<rect x="120" y="140" width="160" height="115" fill="${w}" stroke="${wD}" stroke-width="2"/>` + merlons(120,140,160);
+  c += win(148,175,20,28) + win(252,175,20,28);
+  c += `<path d="M178 255 L178 214 Q200 190 222 214 L222 255Z" fill="#7A4A2A" stroke="${INK}" stroke-width="2"/>
+        <path d="M189 205 L189 255 M200 200 L200 255 M211 205 L211 255" stroke="#5A3218" stroke-width="2"/><circle cx="214" cy="234" r="2.5" fill="#FFC23C"/>`;
+
+  let ground = `<path d="M0 248 Q100 234 200 250 Q300 262 400 244 L400 300 L0 300Z" fill="${night?'#3E7A55':'#7BCB6B'}"/>`;
+  let moat = s.moat ? `<path d="M0 266 Q200 254 400 266 L400 284 Q200 272 0 284Z" fill="${night?'#3B5FA8':'#4DA3FF'}"/>
+      <path d="M40 272 q8 -4 16 0 M140 266 q8 -4 16 0 M270 266 q8 -4 16 0 M350 272 q8 -4 16 0" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/>
+      <path d="M180 255 L220 255 L224 280 L176 280Z" fill="#A86B3C" stroke="${INK}" stroke-width="2"/>
+      <path d="M178 262 L222 262 M177 270 L223 270" stroke="#7A4A2A" stroke-width="2"/>` : '';
+  let flowers='';
+  if (s.flowers){ const fx=[[20,262],[52,290],[108,264],[150,292],[250,292],[300,262],[340,292],[382,264]], cols=['#FF5E8A','#FFC23C','#FFFFFF','#8E5BD9'];
+    fx.forEach(([x,y],i)=>{ const col=cols[i%4]; flowers += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y+9}" stroke="#2E7D3A" stroke-width="2"/>`+
+      [[-3,0],[3,0],[0,-3],[0,3]].map(([a,b])=>`<circle cx="${x+a}" cy="${y+b}" r="3" fill="${col}"/>`).join('') + `<circle cx="${x}" cy="${y}" r="1.8" fill="#FFC23C"/>`; }); }
+  return sky + ground + c + moat + flowers;
+}
+
+/* ---------- Boy drawing (200 x 305) ---------- */
+function boy(s){
+  const sk=s.bskin, skD=shade(sk,-22), h=s.bhairColor, sh=s.shirt, shD=shade(sh,-45), shL=shade(sh,45), pa=s.pants;
+  const cap = `<path d="M66 88 Q63 51 100 50 Q137 51 134 88 Q130 68 116 66 Q100 60 84 66 Q70 68 66 88Z" fill="${h}"/>`;
+  let back='', front=cap, by=54;
+  if (s.bhair==='afro'){ back = `<circle cx="100" cy="80" r="47" fill="${h}"/>`;
+    for (let i=0;i<12;i++){ const a=i/12*Math.PI*2; back += `<circle cx="${100+Math.cos(a)*44}" cy="${80+Math.sin(a)*44}" r="8" fill="${h}"/>`; } by=38; }
+  if (s.bhair==='curly'){ for (let x=72;x<=128;x+=9.3) front += `<circle cx="${x}" cy="${58-Math.sin((x-72)/56*Math.PI)*6}" r="9" fill="${h}"/>`; by=46; }
+  if (s.bhair==='twists'){ for (let x=70;x<=130;x+=10) front += `<ellipse cx="${x}" cy="${56-Math.sin((x-70)/60*Math.PI)*6}" rx="5" ry="11" fill="${h}" stroke="${shade(h,25)}" stroke-width="1.2"/>`; by=46; }
+  if (s.bhair==='buzz') front = `<path d="M68 84 Q66 53 100 53 Q134 53 132 84 Q128 66 100 63 Q72 66 68 84Z" fill="${h}" opacity=".85"/>`;
+
+  let pic='';
+  if (s.design==='lightning') pic = `<path d="M106 148 L90 172 L100 172 L95 194 L113 166 L102 166 Z" fill="#FFC23C" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  if (s.design==='star') pic = `<path d="M100 150 L105.9 162 L119 163.8 L109.5 173 L111.8 186 L100 179.8 L88.2 186 L90.5 173 L81 163.8 L94.1 162Z" fill="#FFC23C" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  if (s.design==='stripes') pic = [156,172,188].map(y=>`<rect x="78" y="${y}" width="44" height="7" fill="${shL}"/>`).join('');
+  if (s.design==='number') pic = `<text x="100" y="186" text-anchor="middle" font-family="Sniglet, Nunito, sans-serif" font-weight="800" font-size="34" fill="#fff" stroke="${shD}" stroke-width="1.5">${s.vnum}</text>`;
+
+  const shorts = s.bottoms==='shorts';
+  const legs = shorts
+    ? `<rect x="85" y="236" width="12" height="48" fill="${sk}"/><rect x="103" y="236" width="12" height="48" fill="${sk}"/>
+       <path d="M78 200 L122 200 L122 240 L101 240 L100 222 L99 240 L78 240Z" fill="${pa}"/>`
+    : `<path d="M80 200 L120 200 L120 284 L102 284 L100 220 L98 284 L80 284Z" fill="${pa}"/>`;
+
+  let hat='';
+  const hc = shade(sh,-30);
+  if (s.hat==='cap'){ const y = s.bhair==='afro' ? 58 : 70;
+    hat = `<path d="M66 ${y} Q66 ${y-34} 100 ${y-36} Q134 ${y-34} 134 ${y} Z" fill="${hc}"/><path d="M100 ${y-2} L150 ${y-2} Q156 ${y+6} 142 ${y+7} L100 ${y+4}Z" fill="${shade(hc,-25)}"/><circle cx="100" cy="${y-35}" r="4" fill="${shL}"/>`; }
+  if (s.hat==='crown') hat = `<path d="M76 ${by} L74 ${by-24} L88 ${by-12} L100 ${by-30} L112 ${by-12} L126 ${by-24} L124 ${by} Z" fill="#FFC23C" stroke="#D99A00" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="${by-9}" r="4" fill="#E23D4B"/><circle cx="85" cy="${by-7}" r="3" fill="#2F8FE0"/><circle cx="115" cy="${by-7}" r="3" fill="#2F8FE0"/>`;
+  if (s.hat==='headphones'){ const r = s.bhair==='afro' ? 50 : 38;
+    hat = `<path d="M${100-r} 92 Q${100-r} ${88-r*1.15} 100 ${88-r*1.15} Q${100+r} ${88-r*1.15} ${100+r} 92" stroke="${INK}" stroke-width="6" fill="none"/>
+      <rect x="${92-r}" y="80" width="16" height="26" rx="7" fill="${hc}" stroke="${INK}" stroke-width="2"/><rect x="${84+r}" y="80" width="16" height="26" rx="7" fill="${hc}" stroke="${INK}" stroke-width="2"/>`; }
+
+  return `
+  ${back}
+  ${legs}
+  <path d="M74 292 Q74 280 90 280 L98 282 L98 296 L72 296Z" fill="#fff" stroke="${INK}" stroke-width="2"/>
+  <path d="M126 292 Q126 280 110 280 L102 282 L102 296 L128 296Z" fill="#fff" stroke="${INK}" stroke-width="2"/>
+  <rect x="92" y="112" width="16" height="24" rx="4" fill="${skD}"/>
+  <path d="M76 140 Q60 166 64 200" stroke="${sk}" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M124 140 Q140 166 136 200" stroke="${sk}" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <circle cx="64" cy="203" r="7.5" fill="${sk}"/><circle cx="136" cy="203" r="7.5" fill="${sk}"/>
+  <path d="M72 136 Q100 128 128 136 L123 206 L77 206 Z" fill="${sh}"/>
+  <path d="M88 133 Q100 143 112 133" fill="${skD}"/>
+  <path d="M62 150 L72 134 L86 138 L80 156Z" fill="${sh}"/><path d="M138 150 L128 134 L114 138 L120 156Z" fill="${sh}"/>
+  ${pic}
+  <circle cx="68" cy="92" r="6.5" fill="${sk}"/><circle cx="132" cy="92" r="6.5" fill="${sk}"/>
+  <circle cx="100" cy="88" r="33" fill="${sk}"/>
+  <ellipse cx="87" cy="91" rx="4.2" ry="5.2" fill="${INK}"/><ellipse cx="113" cy="91" rx="4.2" ry="5.2" fill="${INK}"/>
+  <circle cx="88.6" cy="89" r="1.6" fill="#fff"/><circle cx="114.6" cy="89" r="1.6" fill="#fff"/>
+  <path d="M81 82 Q87 79 92 82 M108 82 Q113 79 119 82" stroke="${shade(h,10)}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="78" cy="101" rx="5" ry="3" fill="#FF6F91" opacity=".3"/><ellipse cx="122" cy="101" rx="5" ry="3" fill="#FF6F91" opacity=".3"/>
+  <path d="M97 98 Q100 100.5 103 98" stroke="${skD}" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M89 104 Q100 116 111 104 Z" fill="#5A1F2A"/><path d="M92 105 L108 105 L107 108 L93 108Z" fill="#fff"/>
+  ${front}
+  ${hat}`;
+}
+
+/* ---------- Vehicle drawing (400 x 300) ---------- */
+function vehicleBg(s, id){
+  let o='';
+  if (s.scene==='track'){
+    o = `<rect width="400" height="300" fill="#BDE6FF"/><circle cx="60" cy="50" r="24" fill="#FFD447"/>
+      <g fill="#fff"><ellipse cx="260" cy="44" rx="30" ry="12"/><ellipse cx="282" cy="36" rx="20" ry="12"/></g>
+      <rect y="196" width="400" height="104" fill="#7BCB6B"/>
+      <g fill="#E23D4B"><rect x="0" y="186" width="400" height="10"/></g>
+      <g fill="#fff">${Array.from({length:10},(_,i)=>`<rect x="${i*40+20}" y="186" width="20" height="10"/>`).join('')}</g>
+      <rect y="232" width="400" height="50" fill="#5B5870"/>
+      <g fill="#fff">${Array.from({length:8},(_,i)=>`<rect x="${i*52+6}" y="279" width="30" height="4" rx="2"/>`).join('')}</g>
+      <line x1="376" y1="90" x2="376" y2="232" stroke="${INK}" stroke-width="3"/>
+      ${[0,1,2,3].map(c=>[0,1,2].map(r=>`<rect x="${378-4*9+c*9}" y="${92+r*9}" width="9" height="9" fill="${(c+r)%2?'#fff':INK}"/>`).join('')).join('')}`;
+  } else if (s.scene==='city'){
+    o = `<rect width="400" height="300" fill="#262052"/><circle cx="330" cy="46" r="20" fill="#FFF3C4"/><circle cx="340" cy="40" r="18" fill="#262052"/>`;
+    o += [[30,20],[90,50],[150,26],[210,60],[250,18],[380,80]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="#fff"/>`).join('');
+    const bl=[[0,120,60],[64,90,50],[118,140,70],[192,100,46],[242,130,60],[306,80,48],[358,120,50]];
+    bl.forEach(([x,y,w],i)=>{ o += `<rect x="${x}" y="${y}" width="${w}" height="${232-y}" fill="${i%2?'#3A3170':'#312A62'}"/>`;
+      for (let yy=y+12; yy<220; yy+=20) for (let xx=x+8; xx<x+w-8; xx+=14) if ((xx*7+yy*3+i)%5>1) o += `<rect x="${xx}" y="${yy}" width="7" height="9" fill="#FFE17A"/>`; });
+    o += `<rect y="232" width="400" height="68" fill="#3E3A55"/>` + Array.from({length:8},(_,i)=>`<rect x="${i*52+6}" y="279" width="30" height="4" rx="2" fill="#FFE17A"/>`).join('');
+  } else {
+    o = `<rect width="400" height="300" fill="#14123A"/>`;
+    o += [[20,30],[70,80],[120,20],[170,60],[230,30],[280,100],[370,140],[40,150],[140,130],[320,20],[210,160],[90,200]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="#fff"/>`).join('');
+    o += `<circle cx="330" cy="72" r="26" fill="#FF8FB1"/><ellipse cx="330" cy="72" rx="44" ry="10" fill="none" stroke="#FFC23C" stroke-width="4" transform="rotate(-15 330 72)"/>
+      <path d="M0 256 Q200 238 400 256 L400 300 L0 300Z" fill="#B8B3CF"/><ellipse cx="80" cy="276" rx="22" ry="6" fill="#9A94B8"/><ellipse cx="310" cy="282" rx="30" ry="7" fill="#9A94B8"/>`;
+  }
+  return o;
+}
+function vehicle(s){
+  const c=s.vcolor, cD=shade(c,-50), cL=shade(c,50), glass='#9FD7FF';
+  const hub = s.wheels==='gold' ? '#FFC23C' : s.wheels==='neon' ? '#39F3C8' : '#C9C6D6';
+  const wheel = (x,y,r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#22202E" ${s.wheels==='neon'?'stroke="#39F3C8" stroke-width="3"':''}/>
+    <circle cx="${x}" cy="${y}" r="${r*.5}" fill="${hub}"/><circle cx="${x}" cy="${y}" r="${r*.18}" fill="#22202E"/>`;
+  let body='', ax=0, ay=0;
+  if (s.vtype==='race'){
+    body = `<path d="M58 214 L48 188 L82 188 L88 206Z" fill="${cD}"/>
+      <path d="M58 244 L60 214 Q64 204 90 204 L170 200 Q190 174 232 174 Q264 174 282 200 L332 206 Q350 210 348 244 Z" fill="${c}" stroke="${cD}" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M188 200 Q200 182 228 182 Q252 182 264 200 Z" fill="${glass}" stroke="${cD}" stroke-width="2"/>
+      <rect x="330" y="214" width="16" height="8" rx="3" fill="#FFE17A"/>`
+      + wheel(118,244,25) + wheel(296,244,25);
+    ax=150; ay=224;
+  } else if (s.vtype==='truck'){
+    body = `<path d="M110 196 L130 170 M300 196 L280 170" stroke="#5B5870" stroke-width="8"/>`
+      + wheel(118,226,42) + wheel(292,226,42) +
+      `<path d="M62 196 L70 150 L170 148 L198 108 L282 108 L304 148 L340 154 Q352 158 350 196 Z" fill="${c}" stroke="${cD}" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M208 116 L274 116 L290 148 L196 148Z" fill="${glass}" stroke="${cD}" stroke-width="2"/>
+      <rect x="336" y="162" width="14" height="10" rx="3" fill="#FFE17A"/>
+      <path d="M70 196 L350 196" stroke="${cD}" stroke-width="6"/>`;
+    ax=125; ay=174;
+  } else {
+    body = `<path d="M172 214 Q200 290 228 214Z" fill="#FF8A3D"/><path d="M186 214 Q200 262 214 214Z" fill="#FFE17A"/>
+      <path d="M160 160 L118 228 L162 212Z" fill="${cD}"/><path d="M240 160 L282 228 L238 212Z" fill="${cD}"/>
+      <path d="M200 26 Q254 80 246 214 L154 214 Q146 80 200 26Z" fill="${c}" stroke="${cD}" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M200 26 Q226 48 236 72 L164 72 Q174 48 200 26Z" fill="#fff" opacity=".85"/>
+      <circle cx="200" cy="112" r="20" fill="${glass}" stroke="#fff" stroke-width="5"/>
+      <rect x="192" y="206" width="16" height="14" fill="${cD}"/>`;
+    ax=200; ay=170;
+  }
+  let st='';
+  if (s.sticker==='number') st = `<circle cx="${ax}" cy="${ay}" r="17" fill="#fff" stroke="${INK}" stroke-width="2"/><text x="${ax}" y="${ay+8}" text-anchor="middle" font-family="Sniglet, Nunito, sans-serif" font-weight="800" font-size="${s.vnum>9?19:23}" fill="${INK}">${s.vnum}</text>`;
+  if (s.sticker==='flames'){ const x=s.vtype==='rocket'?ax+22:ax+10, y=ay+4;
+    st = `<path d="M${x-50} ${y+12} L${x+14} ${y+12} Q${x+26} ${y} ${x+6} ${y-5} Q${x+16} ${y-14} ${x-6} ${y-11} Q${x+2} ${y-22} ${x-18} ${y-15} Q${x-24} ${y-4} ${x-50} ${y+12}Z" fill="#FF8A3D" stroke="#FFE17A" stroke-width="2.5" stroke-linejoin="round"/>`; }
+  if (s.sticker==='stars') st = [[-18,-4,9],[6,6,7],[22,-10,6]].map(([dx,dy,r])=>{ const x=ax+dx, y=ay+dy;
+    return `<path d="${Array.from({length:10},(_,i)=>{const a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*.45:r; return (i?'L':'M')+(x+Math.cos(a)*rr).toFixed(1)+' '+(y+Math.sin(a)*rr).toFixed(1);}).join(' ')}Z" fill="#FFC23C" stroke="${INK}" stroke-width="1.2"/>`; }).join('');
+  if (s.sticker==='lightning') st = `<path d="M${ax+6} ${ay-18} L${ax-10} ${ay+2} L${ax} ${ay+2} L${ax-5} ${ay+20} L${ax+12} ${ay-4} L${ax+2} ${ay-4}Z" fill="#FFC23C" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  return body + st;
+}
+function vehicleScene(s){ return vehicleBg(s) + `<g transform="translate(92 59) scale(.78)">${vehicle(s)}</g>`; }
+
+/* ---------- UI ---------- */
+const $ = id => document.getElementById(id);
+function controls(list){
+  return list.map(g => `<div class="group" role="group" aria-label="${g.label}"><span>${g.label}</span><div class="row">` +
+    g.options.map(([v,lab]) => { const on = S[g.key]===v;
+      return g.type==='sw'
+        ? `<button class="sw" style="background:${v}" aria-label="${lab}" title="${lab}" aria-pressed="${on}" data-k="${g.key}" data-v='${JSON.stringify(v)}'></button>`
+        : `<button class="chip" aria-pressed="${on}" data-k="${g.key}" data-v='${JSON.stringify(v)}'>${lab}</button>`; }).join('') +
+    `</div></div>`).join('');
+}
+function randomize(list){ list.forEach(g => { S[g.key] = g.options[Math.floor(Math.random()*g.options.length)][0]; }); }
+const girl = () => S.mode==='girl';
+function title(){ return girl() ? `Princess ${esc(S.name.trim() || 'Amara')}'s Castle` : `${esc(S.bname.trim() || 'Kofi')}'s ${VNAME[S.vtype]}`; }
+
+function render(){
+  document.body.classList.toggle('boy', S.mode==='boy');
+  $('h1').innerHTML = S.mode==='girl' ? 'Princess <span>Castle</span> Maker' : S.mode==='boy' ? 'Super <span>Vehicle</span> Maker' : 'Castles <span>&amp;</span> Cars';
+  $('game').classList.toggle('final', S.step===0 || S.step===3);
+  if (S.step===0){
+    $('steps').innerHTML = '';
+    $('stage').innerHTML = `<div class="choose"><p>Who are you making today?</p>
+      <button class="pick" data-act="girl"><svg viewBox="0 0 200 305" aria-hidden="true">${princess(DEFAULTS)}</svg><strong>Girl</strong><small>Princess + castle</small></button>
+      <button class="pick b" data-act="boy"><svg viewBox="0 0 200 305" aria-hidden="true">${boy(DEFAULTS)}</svg><strong>Boy</strong><small>Yourself + a vehicle</small></button></div>`;
+    $('panel').innerHTML = '';
+    return;
+  }
+  const labels = girl() ? ['Princess','Castle','Ta-da!'] : ['Me','Vehicle',"Let's go!"];
+  $('steps').innerHTML = `<button class="step" data-act="home">Girl / Boy</button>` + labels.map((l,i) =>
+    `<button class="step" data-step="${i+1}" ${S.step===i+1?'aria-current="step"':''}><b>${i+1}</b>${l}</button>`).join('');
+  if (S.step===1){
+    const person = girl() ? princess(S) : boy(S);
+    $('stage').innerHTML = `<svg viewBox="0 0 200 305" role="img" aria-label="${girl()?'Your princess':'You'}">${person}</svg>`;
+    $('panel').innerHTML = girl()
+      ? `<h2>Make your princess</h2>
+        <div class="group"><span>Her name</span><input type="text" id="pname" maxlength="18" value="${esc(S.name)}" aria-label="Princess name"></div>
+        ${controls(PRINCESS)}
+        <div class="actions"><button class="btn" data-act="rand1">Surprise me</button><button class="btn go" data-act="next">Now build her castle →</button></div>`
+      : `<h2>Make yourself</h2>
+        <div class="group"><span>Your name</span><input type="text" id="pname" maxlength="18" value="${esc(S.bname)}" aria-label="Your name"></div>
+        ${controls(S.bottoms==='shorts' ? BOY.map(g => g.key==='pants' ? {...g, label:'Shorts colour'} : g) : BOY)}
+        <div class="actions"><button class="btn" data-act="rand1">Surprise me</button><button class="btn go" data-act="next">Now build your vehicle →</button></div>`;
+  } else if (S.step===2){
+    $('stage').innerHTML = girl()
+      ? `<svg viewBox="0 0 400 300" role="img" aria-label="Your castle">${castle(S,'c')}</svg>`
+      : `<svg viewBox="0 0 400 300" role="img" aria-label="Your vehicle">${vehicleBg(S)}${vehicle(S)}</svg>`;
+    $('panel').innerHTML = `<h2>${girl()?'Build the castle':'Build your vehicle'}</h2>${controls(girl()?CASTLE:VEHICLE)}
+      <div class="actions"><button class="btn" data-act="rand2">Surprise me</button><button class="btn go" data-act="next">Show me! →</button></div>`;
+  } else {
+    const scene = girl()
+      ? `${castle(S,'f')}<g transform="translate(282 148) scale(.5)">${princess(S)}</g>`
+      : `${vehicleScene(S)}<g transform="translate(4 150) scale(.5)">${boy(S)}</g>`;
+    $('stage').innerHTML = `<svg viewBox="0 0 400 300" role="img" aria-label="${title()}">${scene}</svg><div class="confetti" id="confetti"></div>`;
+    $('panel').innerHTML = `<div class="title-card"><h2>${title()}</h2>
+      <div class="actions"><button class="btn" data-act="p">${girl()?'Change princess':'Change me'}</button><button class="btn" data-act="c">${girl()?'Change castle':'Change vehicle'}</button><button class="btn go" data-act="new">Make a new one</button></div></div>`;
+    confetti();
+  }
+  const inp = $('pname'); if (inp) inp.addEventListener('input', e => { S[girl()?'name':'bname'] = e.target.value; });
+}
+function confetti(){
+  const box = $('confetti'); if (!box) return;
+  const cols=['#FF5E8A','#FFC23C','#2BB3A3','#8E5BD9','#4DA3FF'];
+  box.innerHTML = Array.from({length:40},(_,i)=>`<i style="left:${Math.random()*100}%;background:${cols[i%5]};animation-delay:${Math.random()*.8}s"></i>`).join('');
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.k){ S[b.dataset.k] = JSON.parse(b.dataset.v); render(); return; }
+  if (b.dataset.step){ S.step = +b.dataset.step; render(); return; }
+  const a = b.dataset.act;
+  if (a==='next') S.step++;
+  if (a==='girl' || a==='boy'){ S.mode=a; S.step=1; }
+  if (a==='home') S.step=0;
+  if (a==='rand1') randomize(girl()?PRINCESS:BOY);
+  if (a==='rand2') randomize(girl()?CASTLE:VEHICLE);
+  if (a==='p') S.step=1;
+  if (a==='c') S.step=2;
+  if (a==='new') S = Object.assign({}, DEFAULTS, {step:0});
+  render(); window.scrollTo({top:0, behavior:'smooth'});
+});
+
+function start(data){ if (data && data.S) S = Object.assign({}, DEFAULTS, data.S); render(); }
+window.claude?.hot?.snapshot?.(() => ({S}));
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
+</body>
+</html>
